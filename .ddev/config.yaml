@@ -1,4 +1,4 @@
-name: lagoon-boutique-template
+name: lagoon-dizzydig
 type: drupal10
 docroot: web
 php_version: "8.3"
@@ -13,7 +13,7 @@ use_dns_when_possible: true
 composer_version: "2"
 web_environment:
     - LAGOON_ENVIRONMENT=lagoon-test
-    - LAGOON_PROJECT=lagoon-boutique-template
+    - LAGOON_PROJECT=lagoon-dizzydig
 corepack_enable: false
 hooks:
   post-start:

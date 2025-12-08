@@ -1,8 +1,8 @@
 _core:
   default_config_hash: HlN7eAN2N4JIHsYv56V4E7sqC9bS609KwvGFjyD_mgk
 langcode: en
-uuid: REPLACE_WITH_INSTALLED_SYSTEM.SITE_UUID
-name: lagoon-boutique-template
+uuid: 5e08e163-e087-4845-9b7e-5ab6c8f5f173
+name: lagoon-dizzydig
 mail: eservices@yukon.ca
 slogan: ''
 page:
