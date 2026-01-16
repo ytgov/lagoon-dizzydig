@@ -1,0 +1,74 @@
+.page-node-type-documents {
+    main {
+        .row {
+            @apply pt-0;
+        }
+        
+        .breadcrumb {
+            @apply w-full;
+        }
+    }
+}
+
+.node--type-documents {
+  .field {
+    @apply mb-3;
+  }
+
+  .field__label {
+    @apply mt-0 font-bold;
+  }
+}
+
+/* Styles for Documents search-page. */
+.path-documents {
+    main {
+        .row {
+            @apply pt-0;
+        }
+    }
+    
+    #block-pagetitle {
+        .page-title {
+            @apply text-3.5xl mb-6 mt-3;
+        }
+    }
+
+  .view {
+    .view-content {
+      .views-row {
+        @apply py-2.5;
+
+        &:last-child {
+          @apply border-b border-solid border-gray-lightborder;
+        }
+
+        .views-field-title {
+          .field-content {
+            @apply mt-3.75 mb-0;
+
+            a {
+              @apply no-underline mb-0 text-[22px] leading-1.1;
+            }
+          }
+        }
+
+        .views-field-field-last-updated {
+          .document-browse--date-meta {
+            @apply text-gray-dark text-sm mb-2 block;
+          }
+        }
+
+        .views-field-body {
+    		p {
+    			@apply mb-0;
+
+    			&:empty {
+    				@apply m-0 hidden;
+    			}
+    		}
+    	}
+      }
+    }
+  }
+}

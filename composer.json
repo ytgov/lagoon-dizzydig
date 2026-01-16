@@ -14,7 +14,11 @@
         }
     ],
     "require": {
-        "ytgov/lagoon-boutique-base-image": "dev-prod"
+        "ytgov/lagoon-boutique-base-image": "dev-prod",
+        "drupal/facets": "^3.0",
+        "drupal/search_api": "^1.40",
+        "drupal/facets_block": "^2.0",
+        "drupal/facets_exposed_filters": "^3.0"
     },
     "minimum-stability": "dev",
     "prefer-stable": true,

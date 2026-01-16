@@ -1,0 +1,29 @@
+uuid: 3ff76f9c-65fe-4b99-b733-f5ac54b7f1a1
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_description
+    - node.type.content_page
+  module:
+    - allowed_formats
+    - text
+    - tmgmt_content
+third_party_settings:
+  allowed_formats:
+    allowed_formats: {  }
+  tmgmt_content:
+    excluded: false
+id: node.content_page.field_description
+field_name: field_description
+entity_type: node
+bundle: content_page
+label: Description
+description: ''
+required: false
+translatable: true
+default_value: {  }
+default_value_callback: ''
+settings:
+  allowed_formats: {  }
+field_type: text_long

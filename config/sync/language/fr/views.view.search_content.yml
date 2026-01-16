@@ -1,0 +1,12 @@
+display:
+  default:
+    display_options:
+      filters:
+        search_api_fulltext:
+          expose:
+            placeholder: Mots-clés
+      header:
+        area:
+          content:
+            value: '<h2>Résultats de la recherche</h2>'
+            format: full_html

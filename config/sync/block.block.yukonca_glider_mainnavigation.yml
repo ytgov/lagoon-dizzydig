@@ -1,0 +1,34 @@
+uuid: d4f25e40-064a-419f-9ab8-de56e8ad3214
+langcode: en
+status: true
+dependencies:
+  config:
+    - system.menu.main
+  module:
+    - menu_block
+  theme:
+    - yukonca_glider
+id: yukonca_glider_mainnavigation
+theme: yukonca_glider
+region: sidebar_first
+weight: 0
+provider: null
+plugin: 'menu_block:main'
+settings:
+  id: 'menu_block:main'
+  label: 'Main navigation'
+  label_display: visible
+  provider: menu_block
+  follow: false
+  follow_parent: child
+  display_empty: false
+  label_link: false
+  label_type: root
+  level: 2
+  depth: 5
+  expand_all_items: false
+  parent: 'main:'
+  render_parent: false
+  suggestion: main
+  hide_on_nonactive: true
+visibility: {  }

@@ -1,0 +1,646 @@
+<?php
+
+/**
+ * @file
+ * Theme specific functionality.
+ */
+
+use Drupal\Component\Utility\Html;
+use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Render\Markup;
+use Drupal\Core\StringTranslation\ByteSizeMarkup;
+use Drupal\Core\Url;
+use Drupal\file\Entity\File;
+use Drupal\media\Entity\Media;
+use Drupal\node\Entity\Node;
+use Drupal\node\NodeInterface;
+use Symfony\Component\HttpFoundation\RedirectResponse;
+
+/**
+ * Implements hook_form_system_theme_settings_alter().
+ */
+function yukonca_glider_form_system_theme_settings_alter(&$form, FormStateInterface $form_state) {
+  $form['Footer_text'] = [
+    '#type' => 'textfield',
+    '#title' => 'Footer Text',
+    '#default_value' => !empty(theme_get_setting('Footer_text')) ? theme_get_setting('Footer_text') : "Government of Yukon",
+  ];
+
+}
+
+/**
+ * Empty Function.
+ */
+function yukonca_glider_preprocess_time(&$variables) {
+  // dump($variables); die;.
+}
+
+/**
+ * Implements template_preprocess_paragraph().
+ */
+function yukonca_glider_preprocess_paragraph(&$variables) {
+  $paragraph = $variables['elements']['#paragraph'];
+  // Get the parent bundle.
+  $parentBundle = $paragraph->bundle();
+
+  global $base_url;
+  if ($parentBundle == 'secondary_content') {
+    if (!empty($paragraph->field_landing_page_level_2->target_id)) {
+      $node = Node::load($paragraph->field_landing_page_level_2->target_id);
+      $alias = \Drupal::service('path_alias.manager')->getAliasByPath('/node/' . $paragraph->field_landing_page_level_2->target_id);
+      $view = \Drupal::entityTypeManager()
+        ->getStorage('view')
+        ->load('what_are_you_looking_for_landing_page_l2')
+
+        ->getExecutable();
+
+      // Get the NID from the View result.
+      $view->initDisplay();
+      $view->setArguments([$paragraph->field_landing_page_level_2->target_id]);
+      // $view->setDisplay('latest_blog');
+      $view->execute();
+
+      $result = count($view->result);
+      $variables['landing_page_l2_count'] = $result;
+      $langcode = \Drupal::languageManager()->getCurrentLanguage()->getId();
+      $translated_entity = $node->getTranslation($langcode);
+      $translated_title = $translated_entity->getTitle();
+      $variables['title'] = $translated_title;
+      $variables['landing_page_url'] = $base_url . "/" . $langcode . $alias;
+    }
+  }
+  if ($parentBundle == 'call_to_action') {
+    $string = $paragraph->field_link->uri;
+    $char = "internal";
+
+    if (strpos($string, $char) !== FALSE) {
+      $url = Url::fromUri($paragraph->field_link->uri);
+      $variables['field_link_url'] = $url->toString();
+    }
+    else {
+      $variables['field_link_url'] = $paragraph->field_link->uri;
+    }
+  }
+  if ($parentBundle == 'opening_and_closing_times') {
+    $langcode = \Drupal::languageManager()->getCurrentLanguage()->getId();
+    if ($langcode == 'fr') {
+      $start_time = explode(".", $paragraph->field_opening_time->value / (60 * 60));
+      $end_time = explode(".", $paragraph->field_closing_time->value / (60 * 60));
+      if (isset($start_time[1])) {
+        $variables['start_time'] = $start_time[0] . ' h ' . date("i", $paragraph->field_opening_time->value);
+      }
+      else {
+        $variables['start_time'] = $start_time[0] != '0' ? $start_time[0] . ' h' : '00' . ' h';
+      }
+      if (isset($end_time[1])) {
+        $variables['end_time'] = $end_time[0] . ' h ' . date("i", $paragraph->field_closing_time->value);
+      }
+      else {
+        $variables['end_time'] = $end_time[0] != '0' ? $end_time[0] . ' h' : '00' . ' h';
+      }
+    }
+    $variables['lang'] = $langcode;
+  }
+  if ($parentBundle == 'top_tasks') {
+    if (!empty($paragraph->field_top_tasks_link->target_id)) {
+      $langcode = \Drupal::languageManager()->getCurrentLanguage()->getId();
+      $alias_url = \Drupal::service('path_alias.manager')->getAliasByPath('/node/' . $paragraph->field_top_tasks_link->target_id, $langcode);
+      $variables['field_link_url'] = $base_url . '/' . $langcode . $alias_url;
+    }
+    else {
+      $variables['field_link_url'] = '';
+    }
+  }
+}
+
+/**
+ * Implements hook_form_alter().
+ */
+function yukonca_glider_form_alter(&$form, FormStateInterface $form_state, $form_id) {
+
+  // Adding custom validation for the welcome page type field.
+  if ($form_id == 'comment_blog_comments_form') {
+    $langcode = \Drupal::languageManager()->getCurrentLanguage()->getId();
+    if ($langcode == 'en') {
+      $form['author']['name']['#title'] = t('First name only');
+      $form['actions']['submit']['#value'] = t('Post Comment');
+    }
+    else {
+      $form['author']['name']['#title'] = t('Prénom');
+      $form['actions']['submit']['#value'] = t('Envoyer');
+    }
+  }
+}
+
+/**
+ * Implements template_preprocess_field().
+ */
+function yukonca_glider_preprocess_field(&$variables) {
+  // dump($variables['items']); die;.
+  $language = \Drupal::languageManager()->getCurrentLanguage()->getId();
+  $variables['language'] = $language;
+}
+
+/**
+ * Implements hook_preprocess_html().
+ */
+function yukonca_glider_preprocess_html(&$variables) {
+  $logged_in = \Drupal::currentUser()->isAuthenticated();
+  if ($logged_in) {
+    $variables['#attached']['library'][] = 'yukonca_glider/administrator';
+  }
+  $node = \Drupal::routeMatch()->getParameter('node');
+  if (is_object($node)) {
+
+    if ($node->bundle() == 'campaign_page') {
+      $variables['highlight_color'] = $node->field_highlight_color->color;
+      $variables['link_color'] = $node->field_link_color->color;
+    }
+  }
+}
+
+/**
+ * Implements hook_preprocess_HOOK().
+ */
+function yukonca_glider_preprocess_links__language_block(&$variables) {
+  $language = \Drupal::languageManager()->getCurrentLanguage()->getId();
+
+  // Remove the active language from the list.
+  unset($variables['links'][$language]);
+}
+
+/**
+ * Implements template_preprocess_comment.
+ */
+function yukonca_glider_preprocess_comment(&$variables) {
+  $date_formatter = \Drupal::service('date.formatter');
+  $comment = $variables['elements']['#comment'];
+  $variables['created'] = $date_formatter->format($comment->getCreatedTime(), 'medium_format');
+}
+
+/**
+ * Implements hook_preprocess_HOOK().
+ */
+function yukonca_glider_preprocess_block(&$variables) {
+  if ($variables['base_plugin_id'] == 'system_branding_block') {
+    $logo_file = $variables['site_logo'];
+    $pathinfo = pathinfo($logo_file);
+    $variables['site_footer_logo'] = $pathinfo['dirname'] . '/images/svg/logo-white.svg';
+  }
+  $node = \Drupal::routeMatch()->getParameter('node');
+  if (is_object($node)) {
+
+    $variables['content_type'] = $node->bundle();
+  }
+  $current_path = \Drupal::service('path.current')->getPath();
+  $variables['current_url'] = $current_path;
+}
+
+/**
+ * Implements hook_preprocess_HOOK().
+ */
+function yukonca_glider_preprocess_page__node__blog(&$variables) {
+  /** @var \Drupal\node\NodeInterface $node */
+  $node = $variables['node'];
+
+  $taxonomy_entity_manager = \Drupal::entityTypeManager()->getStorage('taxonomy_term');
+  if ($node->hasField('field_blog_type') && !$node->get('field_blog_type')->isEmpty()) {
+    $tid = $node->get('field_blog_type')->target_id;
+    $blog_type_term = $taxonomy_entity_manager->load($tid);
+    if ($blog_type_term && $blog_type_term->hasField('field_agency_logo') && !$blog_type_term->get('field_agency_logo')->isEmpty()) {
+      $variables['logo_url'] = $blog_type_term->get('field_agency_logo')->view();
+    }
+  }
+
+  $variables['blog_category_subcategory'] = [];
+  if ($node->hasField('field_category') && !$node->get('field_category')->isEmpty()) {
+    $category_term = $taxonomy_entity_manager->load($node->get('field_category')->target_id);
+    $langcode = \Drupal::languageManager()->getCurrentLanguage()->getId();
+    if ($langcode == "en") {
+      $variables['blog_category_subcategory'][] = $category_term->getName();
+    }
+    if ($langcode == "fr") {
+      $category_term = \Drupal::service('entity.repository')->getTranslationFromContext($category_term, $langcode);
+      $variables['blog_category_subcategory'][] = $category_term->getName();
+    }
+  }
+
+  if ($node->hasField('field_subcategory') && !$node->get('field_subcategory')->isEmpty()) {
+    $subcategory_term = $taxonomy_entity_manager->load($node->get('field_subcategory')->target_id);
+    if ($langcode == "en") {
+      $variables['blog_category_subcategory'][] = $subcategory_term->getName();
+    }
+    if ($langcode == "fr") {
+      $subcategory_term = \Drupal::service('entity.repository')->getTranslationFromContext($subcategory_term, $langcode);
+      $variables['blog_category_subcategory'][] = $subcategory_term->getName();
+    }
+  }
+}
+
+/**
+ * Implements hook_theme_suggestions_HOOK_alter().
+ */
+function yukonca_glider_theme_suggestions_page_alter(array &$suggestions, array $variables) {
+  /** @var \Drupal\node\NodeInterface $node */
+  $node = \Drupal::routeMatch()->getParameter('node');
+  if (!$node instanceof NodeInterface) {
+    return;
+  }
+
+  $suggestions[] = 'page__node__' . $node->bundle();
+}
+
+/**
+ * Implements hook_preprocess_HOOK().
+ */
+function yukonca_glider_preprocess_node__blog(&$variables) {
+  /** @var \Drupal\node\NodeInterface $node */
+  $node = $variables['node'];
+  $variables['six_months_old'] = FALSE;
+
+  // Validate node creation date and current date.
+  $created_time = $node->getCreatedTime();
+  $current_time = \Drupal::time()->getCurrentTime();
+  $six_months_in_seconds = 6 * 30 * 24 * 60 * 60;
+
+  if (($current_time - $created_time) >= $six_months_in_seconds) {
+    $variables['six_months_old'] = TRUE;
+  }
+  $langcode = \Drupal::languageManager()->getCurrentLanguage()->getId();
+  $variables['lang'] = $langcode;
+}
+
+/**
+ * Implements hook_preprocess_HOOK().
+ */
+function yukonca_glider_preprocess_node__news(&$variables) {
+  /** @var \Drupal\node\NodeInterface $node */
+  $node = $variables['node'];
+  $source_translation = $node->getTranslation('en');
+
+  // Validate node creation date and current date.
+  $created_time = $source_translation->getCreatedTime();
+  $date_formatter = \Drupal::service('date.formatter');
+  $variables['publish_date'] = $date_formatter->format($created_time, 'medium_format');
+}
+
+/**
+ * Implements hook_preprocess_HOOK().
+ */
+function yukonca_glider_preprocess_node__event(&$variables) {
+  /** @var \Drupal\node\NodeInterface $node */
+  $node = $variables['node'];
+  $variables['six_months_old'] = FALSE;
+
+  // Get the timezone, default to Whitehorse.
+  $timezone = 'America/Whitehorse';
+  $langcode = \Drupal::languageManager()->getCurrentLanguage()->getId();
+
+  if (!empty($node->field_event_start_time->value)) {
+    // Create DateTime objects from UTC values and convert to target timezone.
+    $start_datetime = new \DateTime($node->field_event_start_time->value, new \DateTimeZone('UTC'));
+    $start_datetime->setTimezone(new \DateTimeZone($timezone));
+
+    $end_datetime = new \DateTime($node->field_event_start_time->end_value, new \DateTimeZone('UTC'));
+    $end_datetime->setTimezone(new \DateTimeZone($timezone));
+
+    // Add properly timezone-converted date for template use.
+    $variables['event_date'] = $start_datetime->format('Y-m-d H:i:s');
+
+    // Generate start and end times short if they have no minute value.
+    $start_time = yukonca_glider_utility_format_time_minutes_optional($langcode, $start_datetime);
+    $end_time = yukonca_glider_utility_format_time_minutes_optional($langcode, $end_datetime);
+
+    $variables['start_time'] = $start_time;
+    $variables['end_time'] = $end_time;
+  }
+}
+
+/**
+ * Implements hook_preprocess_HOOK().
+ */
+function yukonca_glider_preprocess_node__landing_page(&$variables) {
+  if (!isset($variables['node']) && !isset($variables['view_mode'])) {
+    return;
+  }
+  $view_mode = $variables['view_mode'];
+  if ($view_mode !== 'primary_item_block') {
+    return;
+  }
+
+  /** @var \Drupal\node\NodeInterface $node */
+  $node = $variables['node'];
+  if (!$node->hasField('field_primary_content') || $node->get('field_primary_content')->isEmpty()) {
+    return;
+  }
+  // Render only the first three links in field_primary_content.
+  $links = $node->get('field_primary_content')->getValue();
+  foreach ($links as $key => $link) {
+    if ($key > 2) {
+      $variables['content']['field_primary_content'][$key]['#access'] = FALSE;
+    }
+  }
+}
+
+/**
+ * Implements hook_preprocess_HOOK().
+ */
+function yukonca_glider_preprocess_node__department(&$variables) {
+  /** @var \Drupal\node\NodeInterface $node */
+  $node = $variables['node'];
+
+  if (!$node->hasField('field_department_term') || $node->get('field_department_term')->isEmpty()) {
+    return;
+  }
+  $department_tid = $node->get('field_department_term')->target_id;
+  $latest_news_view['view'] = [
+    '#type' => 'view',
+    '#name' => 'news_listing',
+    '#display_id' => 'block_department_latest_news',
+    '#arguments' => [$department_tid],
+  ];
+
+  $readmore_url = '/news?field_department_term_target_id=' . $department_tid;
+  $latest_news_view['read_more'] = $readmore_url;
+  $variables['view_latest_news'] = $latest_news_view;
+}
+
+/**
+ * Implements hook_preprocess_HOOK().
+ */
+function yukonca_glider_preprocess_node__campground_directory_record(&$variables) {
+  /** @var \Drupal\node\NodeInterface $node */
+  $node = $variables['node'];
+
+  $availability_fields = [
+    'field_may_availability',
+    'field_june_availability',
+    'field_july_availability',
+    'field_august_availability',
+    'field_september_availability',
+  ];
+
+  $availability = [];
+  $is_empty_chart = TRUE;
+  foreach ($availability_fields as $field_name) {
+    if (!$node->hasField($field_name)) {
+      continue;
+    }
+
+    $field = $node->get($field_name);
+    $title = $field->getFieldDefinition()->getLabel();
+    $title = str_replace(' availability', '', $title);
+    $availability[] = [
+      'title' => $title,
+      'value' => $field->value,
+    ];
+
+    if ($field->value != 'na') {
+      $is_empty_chart = FALSE;
+    }
+  }
+
+  if ($is_empty_chart) {
+    $variables['availability'] = $variables['content']['field_campground_site_type'][0]['#plain_text'];
+  }
+  else {
+    $variables['availability'] = $availability;
+  }
+
+  $services_fields = [
+    'field_outhouse_unisex',
+    'field_bear_proof_garbage_bins',
+    'field_bear_proof_recycling_bins',
+    'field_picnic_tables',
+    'field_cook_shelter',
+    'field_fire_ring',
+    'field_bear_proof_cache',
+    'field_boat_launch',
+    'field_boat_dock',
+    'field_hiking_trails',
+    'field_playground',
+    'field_at_least_one_wheelchair_ac',
+    'field_one_wheelchair_camp',
+    'field_hand_pump_or_water_tank_pr',
+    'field_sandy_or_cobble_beach_with',
+    'field_viewing_structures_or_sign',
+    'field_interpretive_centre',
+    'field_group_campsite',
+    'field_tent_pads_or_sites_availab',
+    'field_swimming_area_or_dock_no_l',
+    'field_change_room',
+    'field_outdoor_ampitheatre',
+    'field_walk_in_sites',
+  ];
+  $available_services = [];
+  foreach ($services_fields as $field_name) {
+    if (!$node->hasField($field_name)) {
+      continue;
+    }
+    $field = $node->get($field_name);
+    $field_name = $field->getName();
+    $field_name = str_replace('field_', '', $field_name);
+    $available_services[] = [
+      'name' => $field_name,
+      'title' => $field->getFieldDefinition()->getLabel(),
+      'value' => $field->value,
+    ];
+  }
+
+  $variables['available_services'] = $available_services;
+  $langcode = \Drupal::languageManager()->getCurrentLanguage()->getId();
+  $variables['langcode'] = $langcode;
+}
+
+/**
+ * Implements hook_preprocess_HOOK().
+ */
+function yukonca_glider_preprocess_node__multi_step_page(&$variables) {
+  $section_paragraphs = !empty($variables["content"]["field_paragraphs"]) ? array_column($variables["content"]["field_paragraphs"], '#paragraph') : [];
+  $node = $variables['node'];
+
+  $variables['tabs']['items'] = [];
+  foreach ($section_paragraphs as $paragraph) {
+    $variables['tabs']['items'][] = [
+      'title' => $paragraph->get('field_title')->getString(),
+      'content' => check_markup($paragraph->get('field_section_content')->value, $paragraph->get('field_section_content')->format),
+    ];
+  }
+
+  $variables['tabs']['links_icon_type'] = $node->get('field_sequential_non_sequential')
+    ->getString();
+  // Use for pills ID.
+  $variables['tabs']['id'] = Html::getUniqueId($node->getTitle());
+}
+
+/**
+ * Implements hook_preprocess_HOOK().
+ */
+function yukonca_glider_preprocess_node__documents(&$variables) {
+
+  $node = $variables['node'];
+  if ($node->hasField('field_document_upload') && !$node->get('field_document_upload')->isEmpty()) {
+
+    $media_file = $node->get('field_document_upload')->entity;
+
+    if (!empty($media_file) && $media_file->hasField('field_media_file') && !$media_file->get('field_media_file')->isEmpty()) {
+
+      $fid = $media_file->field_media_file->target_id;
+      $file = File::load($fid);
+      // dump($file); die;.
+      if (!empty($file)) {
+        $variables['document_size'] = ByteSizeMarkup::create($file->getSize() ?? 0);
+        $variables['document_type'] = str_replace('application/', '', $file->getMimeType());
+        $variables['file_url'] = $file->createFileUrl();
+      }
+    }
+  }
+}
+
+/**
+ * Implements template_proprocess_page().
+ */
+function yukonca_glider_preprocess_page(&$variables) {
+  
+}
+
+/**
+ * Implements template_preprocess_file_link().
+ *
+ * Use the media entity name as file link text if there is no description.
+ */
+function yukonca_glider_preprocess_file_link(&$variables) {
+  if (is_string($variables['link'])) {
+    return;
+  }
+  if (is_object($variables['link'])) {
+    // Ensure we are working with a renderable array, as that's
+    // just easier.
+    $variables['link'] = $variables['link']->toRenderable();
+  }
+  $icon = '<i class="fa fa-download" aria-hidden="true"></i>';
+  $filename = $variables['link']['#title'];
+  $link_text = Markup::create('<span class="link-text flex-grow mr-2">' . t('Download Map') . '</span><span class="icon">' . $icon . '</span>');
+  $variables['link']['#title'] = $link_text;
+  $variables['link']['#attributes']['class'][] = 'btn btn-outline-primary';
+  $variables['link']['#attributes']['target'] = '_blank';
+  $variables['filename'] = $filename;
+}
+
+/**
+ * Implements hook_preprocess_HOOK().
+ *
+ * Limit the text length of the last breadcrumb item.
+ */
+//  function yukonca_glider_preprocess_breadcrumb(&$variables) {
+//      $url = \Drupal::service('url_generator')->generateFromRoute('<current>');
+     
+//      if (strpos($string, "content-design") !== false) {
+//       	// Add your new link BEFORE existing breadcrumb.
+//     	    $new_link = [
+//     	      'text' => 'Laboratory',
+//     	      'url'  => Url::fromUri('internal:/laboratories'),
+//     	    ];
+    
+//     	    // Insert at the desired position
+//     	    array_splice($variables['breadcrumb'], 1, 0, [$new_link]);
+//       }
+//  }
+//   $route = \Drupal::routeMatch();
+//   $node = $route->getParameter('node');
+//   if ($node instanceof NodeInterface) {
+//     $max_length = 100;
+//     $index = array_key_last($variables['breadcrumb']);
+//     $title = $variables['breadcrumb'][$index]['text'];
+
+//     if (strlen($title) > $max_length) {
+//       $variables['breadcrumb'][$index]['text'] = substr($title, 0, $max_length) . '...';
+//     }
+//     // Add the cache tag to update the breadcrumb if the node title changes.
+//     $nid = \Drupal::routeMatch()->getRawParameter('node');
+//     $variables['#cache']['tags'][] = 'node:' . $nid;
+
+//     if ($node->bundle() == 'campground_directory_record') {
+//       $variables['breadcrumb'][$index]['text'] = $node->title->value;
+//     }
+//     if ($node->bundle() == 'blog') {
+//       // dump($variables['breadcrumb']); die;
+//       // Adding the title of the page in the breadcrumb.
+//       global $base_url;
+//       $language = \Drupal::languageManager()->getCurrentLanguage()->getId();
+
+//       if ($language == "fr") {
+//         $variables['breadcrumb'][1] = [
+//           'text' => "Blogue sur les renseignements et les services en ligne",
+//           'url' => $base_url . "/fr/blogs",
+//         ];
+//       }
+//       else {
+//         $variables['breadcrumb'][1] = [
+//           'text' => "Government of Yukon blogs",
+//           'url' => $base_url . "/blogs",
+//         ];
+//       }
+
+//       if (!empty($node->field_blog_type->target_id)) {
+//         $term = \Drupal::entityTypeManager()->getStorage('taxonomy_term')->load($node->field_blog_type->target_id);
+//         $title = $term->name->value;
+//         $aliasManager = \Drupal::service('path_alias.manager');
+//         $alias = $aliasManager->getAliasByPath('/taxonomy/term/' . $node->field_blog_type->target_id);
+//         $variables['breadcrumb'][2] = [
+//           'text' => $title,
+//           'url' => $base_url . $alias,
+//         ];
+//       }
+
+//       $variables['breadcrumb'][3] = [
+//         'text' => $node->getTitle(),
+//       ];
+//     }
+//     if ($node->bundle() == 'in_page_alert') {
+//       $language = \Drupal::languageManager()->getCurrentLanguage()->getId();
+//       if ($language == 'en' && isset($variables['breadcrumb'][2])) {
+//         unset($variables['breadcrumb'][1]);
+//       }
+//     }
+//     if ($node->bundle() == 'engagement') {
+//       $variables['breadcrumb'][1]['text'] = 'Engagements';
+//     }
+//   }
+// }
+
+/**
+ * Implements hook_theme_suggestions_HOOK_alter().
+ */
+function yukonca_glider_theme_suggestions_table_alter(array &$suggestions, array $variables) {
+  $node = \Drupal::routeMatch()->getParameter('node');
+  if (!$node instanceof NodeInterface) {
+    return;
+  }
+  $class = $variables['attributes']['class'][0];
+  $suggestions[] = "table__" . $node->id() . str_replace("-", "_", $class);
+}
+
+/**
+ * Return a long or short time depending on presence of minutes.
+ *
+ * e.g. 2:00 => 2 pm / 13 h, whereas 2:30 becomes 2:30 pm / 14:30 h
+ */
+function yukonca_glider_utility_format_time_minutes_optional($langcode, DateTime $datetime){
+    if ($langcode == 'en') {
+      if ($datetime->format('i') == "00") {
+        return $datetime->format('g a');
+      }
+      else {
+        return $datetime->format('g:i a');
+      }
+    }
+    else {
+      if ($datetime->format('i') == "00") {
+        return $datetime->format('G \h');
+      }
+      else {
+        return $datetime->format('G \h i');
+      }
+    }
+}

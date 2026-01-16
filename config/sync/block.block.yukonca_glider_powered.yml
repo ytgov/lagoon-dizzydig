@@ -1,0 +1,22 @@
+uuid: 02d75726-3ce4-441e-8ccd-b748efee3cc0
+langcode: en
+status: true
+dependencies:
+  module:
+    - system
+  theme:
+    - yukonca_glider
+_core:
+  default_config_hash: eYL19CLDyinGTWYQfBD1DswWzglEotE_kHnHx3AxTXM
+id: yukonca_glider_powered
+theme: yukonca_glider
+region: header_branding
+weight: -1
+provider: null
+plugin: system_powered_by_block
+settings:
+  id: system_powered_by_block
+  label: 'Powered by Drupal'
+  label_display: '0'
+  provider: system
+visibility: {  }

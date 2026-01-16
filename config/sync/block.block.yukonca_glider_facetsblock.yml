@@ -1,0 +1,32 @@
+uuid: e2c73848-d94e-4a8a-ac1b-f7ae7f1f28b5
+langcode: en
+status: true
+dependencies:
+  module:
+    - facets_block
+    - system
+  theme:
+    - yukonca_glider
+id: yukonca_glider_facetsblock
+theme: yukonca_glider
+region: sidebar_first
+weight: 0
+provider: null
+plugin: facets_block
+settings:
+  id: facets_block
+  label: 'Facets Block'
+  label_display: '0'
+  provider: facets_block
+  show_title: true
+  exclude_empty_facets: true
+  hide_empty_block: false
+  facets_to_include:
+    - 'facet_block:categories_taxonomy_term_name'
+    - 'facet_block:language'
+  add_js_classes: true
+visibility:
+  request_path:
+    id: request_path
+    negate: false
+    pages: /search/content

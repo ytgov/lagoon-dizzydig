@@ -1,0 +1,32 @@
+{% if item is not empty %}
+    <ul class="tabs--secondary pagination pagination-sm">
+       <li class="{% if language == "en" %}active{% endif %}">
+           <a href="/node/{{ item }}/edit" class="language-link " xml:lang="en">English</a></li>
+       <li class="{% if language == "fr" %}active{% endif %}"><a href="/fr/node/{{ item }}/edit" class="language-link " xml:lang="fr">French</a></li>
+    </ul>
+{% endif %}
+
+<style>
+    div#block-claro-editlanguageblock li.active a {
+        color: #fff;
+    }
+    div#block-claro-editlanguageblock li a {
+        color: #335075;
+    }
+    div#block-claro-editlanguageblock li.active {
+        background: #2572b4;
+    }
+    
+    div#block-claro-editlanguageblock li {
+        color: #335075;
+        background-color: #eaebed;
+        border-color: #2572b4;
+        list-style: none;
+        padding: 10px 16px;
+        border: 1px solid #2572b4;
+    }
+    div#block-claro-editlanguageblock ul {
+        display: flex;
+        gap: 0;
+    }
+</style>

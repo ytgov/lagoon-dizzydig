@@ -1,0 +1,42 @@
+.page-node-type-multi-step-page {
+    .layout-sidebar-first {
+        @include media-breakpoint-down(md) {
+            @apply hidden;
+        }
+    }
+
+    .node--type-multi-step-page {
+      .field__content {
+        ul {
+            li {
+                @apply list-disc;
+            }
+        }
+        
+        ol {
+            li {
+                @apply list-decimal;
+            }
+        }
+        
+        ul,
+        ol {
+          li {
+            @apply pl-2.5;
+    
+            ul {
+              @apply pl-12;
+    
+              li {
+                @apply list-disc;
+              }
+            }
+          }
+        }
+      }
+    
+      .field__item {
+        @apply mb-5;
+      }
+    }
+}

@@ -1,0 +1,22 @@
+uuid: b3a5e719-d6b6-41a3-bd7a-bdc93095d99a
+langcode: en
+status: true
+dependencies:
+  theme:
+    - yukonca_glider
+_core:
+  default_config_hash: ydSxdq7R66I8UMC460rOzlfzvlUL4VRbdwc6z9DWaUI
+id: yukonca_glider_secondary_local_tasks
+theme: yukonca_glider
+region: header_branding
+weight: -4
+provider: null
+plugin: local_tasks_block
+settings:
+  id: local_tasks_block
+  label: 'Secondary tabs'
+  label_display: '0'
+  provider: core
+  primary: false
+  secondary: true
+visibility: {  }

@@ -1,0 +1,26 @@
+uuid: 0d9592f0-4a1d-42dc-820e-af5e685d6bfa
+langcode: en
+status: true
+dependencies:
+  module:
+    - system
+  theme:
+    - yukonca_glider
+_core:
+  default_config_hash: 6aOgWsNTXjqrDm98TXSAjP6qd2nCijD1xw45MrnbK-Y
+id: yukonca_glider_page_title
+theme: yukonca_glider
+region: content
+weight: -11
+provider: null
+plugin: page_title_block
+settings:
+  id: page_title_block
+  label: 'Page Title'
+  label_display: '0'
+  provider: core
+visibility:
+  request_path:
+    id: request_path
+    negate: true
+    pages: "<front>\r\n/search/content"

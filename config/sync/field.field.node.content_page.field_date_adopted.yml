@@ -1,0 +1,25 @@
+uuid: 799d5e5b-6e50-4c2b-a6b7-6421f54d61e3
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_date_adopted
+    - node.type.content_page
+  module:
+    - datetime
+    - tmgmt_content
+third_party_settings:
+  tmgmt_content:
+    excluded: false
+id: node.content_page.field_date_adopted
+field_name: field_date_adopted
+entity_type: node
+bundle: content_page
+label: 'Date adopted'
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: datetime

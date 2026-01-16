@@ -1,0 +1,12 @@
+name: W3 Basic page data upload
+type: module
+description: 'W3 Basic page data upload'
+core_version_requirement: ^10 || ^9
+package: 'W3'
+
+dependencies:
+  - metatag:metatag
+  - language:language
+  - pathauto:pathauto
+  - locale:locale
+  - content_translation:content_translation
