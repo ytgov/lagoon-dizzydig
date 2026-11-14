@@ -1,0 +1,451 @@
+@layer base {
+  .footer--main {
+    @apply bg-gray-600;
+  }
+}
+
+.region {
+  &.region-footer-logo {
+    .field--name-field-media-image {
+      img {
+        @apply w-[158px] h-[62px];
+      }
+    }
+  }
+}
+
+/* Start issue 153 */
+
+.view-id-documents_browse {
+  .view-header {
+    @apply mb-0;
+  }
+}
+
+.documents-item {
+  @apply py-2.5;
+
+  .document-browse--title {
+    @apply font-medium text-[22px] leading-6 text-black mt-[15px];
+
+    a {
+      @apply no-underline mb-0;
+    }
+  }
+
+  p {
+    &.field-content:empty {
+      @apply hidden m-0;
+    }
+  }
+}
+
+body {
+  /* Start Issue 182 */
+
+  &.page-node-type-news {
+    main {
+        .row {
+            @apply pt-0;
+        }
+    }
+    
+    .node {
+      .field--name-field-related-link {
+        .field__label {
+          @apply pb-0 my-[15px];
+        }
+  
+        .field__item {
+          @apply my-2.5;
+  
+          a {
+            @apply font-medium;
+          }
+        }
+      }
+      
+      .field--name-field-news-quote {
+          .blockquote {
+              @apply min-h-[106px];
+          }
+          
+          + .field--name-field-contact {
+              @apply -mt-15;
+          }
+      }
+    }
+  }
+
+  /* End Issue 182 */
+
+  &.page-node-type-topics-page {
+    main {
+      p {
+        &:last-child {
+          @apply mb-0;
+        }
+      }
+  
+      .hero {
+        & &--image {
+          @apply min-h-[120px];
+  
+          .aurora-waves {
+            #heading {
+              @apply font-medium max-w-[calc(60%-80px)];
+            }
+          }
+        }
+      }
+  
+      .topic-top-tasks {
+        @apply flex my-[35px] p-5 border rounded border-gray-lightborder;
+  
+        .field {
+          &.field--name-field-whats-new-header {
+            @apply text-lg leading-1.1 mt-[15px] mb-[11.5px] w-1/3;
+  
+            .field__item {
+              @apply font-medium;
+            }
+          }
+  
+          &.field--name-field-top-task {
+            @apply font-medium w-2/3 px-[15px];
+  
+            .field__item {
+              @apply pb-5;
+  
+              &:last-child {
+                @apply pb-0;
+              }
+            }
+          }
+        }
+      }
+  
+      .field--name-field-paragraphs {
+        .col2list {
+          @apply flex;
+    
+          &:first-child {
+            @apply border-t-0 mt-0;
+          }
+    
+          >div {
+            @apply px-5;
+          }
+    
+          .field {
+            @apply mt-[15px];
+    
+            >div {
+              @apply px-0;
+            }
+    
+            &:first-child {
+              @apply border-t-0;
+            }
+    
+            &.field--name-field-title {
+              @apply w-1/3 text-lg leading-1.1 mb-[11.5px] px-5;
+            }
+    
+            &.field--name-field-link {
+              @apply w-2/3;
+    
+              .field__item {
+                @apply mb-5;
+    
+                &:last-child {
+                  @apply mb-0;
+                }
+    
+                a {
+                  @apply font-medium;
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+
+  #block-page-feedback-webform {
+    @apply mt-5 border-t border-gray-lightborder;
+    
+    .form-required {
+        &:after {
+            filter: grayscale(100%) brightness(0);
+        }
+    }
+  }
+
+  form {
+    .form-type-textarea {
+      @apply m-0;
+
+      label {
+        @apply mb-1.25 font-medium;
+      }
+
+      textarea {
+        @apply border-gray-300;
+        
+        &.error {
+          @apply border-gray-300;
+        }
+      }
+    }
+
+    fieldset {
+      @apply m-0 items-center;
+
+      &.yes-no-trigger-wrapper {
+        @apply flex items-baseline mb-3.75 mt-0 pt-2.5;
+
+        legend {
+          @apply font-medium w-auto;
+        }
+      }
+
+      [id^="edit-was-this-page-helpful"] {
+        @apply flex;
+
+        .form-item-was-this-page-helpful {
+          @apply mt-0 mb-2.5 pl-5;
+
+          label {
+            @apply text-[0px] cursor-pointer;
+        
+            &::after {
+              font-family: "FontAwesome", sans-serif;
+              font-size: 38px;
+              color: #B2B3B2;
+            }
+        
+            &[for^="edit-was-this-page-helpful-yes"] {
+              &::after {
+                content: "\f087";
+              }
+            }
+        
+            &[for^="edit-was-this-page-helpful-no"] {
+              &::after {
+                content: "\f088";
+              }
+            }
+          }
+
+          input {
+            @apply hidden;
+        
+            &:checked {
+              ~label {
+                &:after,
+                &:before {
+                  @apply text-blue-300;
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+
+    .form-actions {
+      .webform-button--submit {
+        @apply py-3.75 px-7.5 bg-blue-300 text-white font-normal rounded-[4px];
+
+        &:hover {
+          @apply bg-blue-600;
+        }
+      }
+    }
+    
+    .form-item--error-message {
+      @apply hidden;
+    }
+  }
+}
+
+[data-drupal-messages] {
+    .messages {
+        &.messages--error {
+            @apply shadow-none bg-none border-0 border-l-4 border-error-border p-3.75 bg-error-bg;
+        }
+    }
+}
+
+.ens-wrapper {
+  flex-wrap: wrap;
+}
+
+.btn {
+  &.button-primary {
+    &:active {
+      @apply bg-[#1c578a] border-[#091c2d] shadow-inner;
+    }
+  }
+}
+
+aside {
+    .region-sidebar-second {
+        .block-blog-feed-block {
+            @apply mt-15;
+
+            .subscribe-rss {
+                @apply pb-10;
+                
+                .block-title {
+                    @apply border-solid border-0 border-b-[12px] border-yellow text-lg mt-3.75 mb-7.5 pb-2.5 pr-3.75;
+                }
+            }
+        }
+    }
+    
+    &.layout-sidebar-second {
+        &.sticky-active {
+            @apply sticky top-0 bg-white z-10;
+            box-shadow: 0 2px 4px 0 rgba(155,155,155,.3);
+            
+            #block-yukonca-glider-blogfeedblock {
+                @apply mt-7.5;
+                
+                .subscribe-rss {
+                    @apply pb-0;
+                }
+            }
+        }
+    }
+}
+
+#node-blog-field-comments {
+    @apply relative;
+
+    .comment-blog-comments-form {
+        @apply hidden;
+        
+        .form-item {
+            label {
+                @apply text-base mb-[5px] font-medium;
+            }
+        }
+        
+        .form-actions {
+            input {
+                @apply py-[6px] px-3 border border-blue-300 rounded bg-blue-300;
+                @apply hover:bg-blue-600 hover:border-blue-600;
+                @apply text-white text-base;
+            }
+        }
+    }
+    
+    .close_comment {
+        @apply hidden;
+        @apply absolute bottom-0 left-[150px];
+        @apply rounded py-[6px] px-3 text-blue-400 border border-blue-400 bg-white no-underline;
+        @apply hover:border-blue-50 hover:text-blue-50;
+    }
+}
+
+.node--type-blog {
+    .cta-card {
+        @apply pb-9 mb-9 border-b-1 border-gray-lightborder;
+        
+        .title {
+            @apply text-[22px] font-medium;
+        }
+    }
+}
+
+nav {
+    &.pager {
+        @apply flex-wrap;
+        
+        ul {
+            @apply pl-0 justify-center flex-wrap;
+
+            li {
+                &.pager__item {
+                    &.pager__item--next {
+                        @include media-breakpoint-up(md) {
+                          @apply absolute right-0;
+                        }
+                    }
+                    
+                    &.pager__item--previous {
+                        @include media-breakpoint-up(md) {
+                          @apply absolute left-0;
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+/* End issue 153 */
+
+.view {
+  &.view-taxonomy-term {
+    .view-content {
+      .views-row {
+        article {
+          .thumbnail {
+            @apply w-[250px];
+          }
+        }
+      }
+    }
+  }
+}
+
+#block-yukonca-glider-views-block-related-tasks-block-1 {
+  @apply my-7.5;
+
+  .block-title {
+    @apply my-3.75 text-lg border-b-1 border-gray-lightborder;
+  }
+
+  .views-field-field-related-tasks {
+    .item-list {
+        ul {
+            @apply pl-0 list-none;
+            
+            li {
+                @apply ml-0 pl-0;
+                
+                a {
+                  display: block;
+                  @apply py-2.5;
+                }
+            }
+        }
+    }
+  }
+}
+
+/* Start Issue 182 */
+
+/*
+.field {
+  &.field--name-field-related-link {
+    &.single-related-post {
+      @apply m-0;
+
+      .field__item {
+        @apply my-[10px];
+
+        a {
+          @apply font-medium;
+        }
+      }
+    }
+  }
+}
+*/
+
+/* End Issue 182 */

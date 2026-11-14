@@ -1,0 +1,25 @@
+w3_data_upload.page:
+  path: '/admin/config/import/page'
+  defaults:
+    _title: 'Basic Page Import'
+    _form: '\Drupal\w3_data_upload\Form\ImportPageForm'
+  requirements:
+    _permission: 'Import form'
+
+w3_data_upload.data_settings_config_form:  
+  path: '/admin/config/data-import-settings'  
+  defaults:  
+    _form: '\Drupal\w3_data_upload\Form\SiteConfig'  
+    _title: 'D7 Import'
+  requirements:  
+    _permission: 'access administration pages'  
+  options:  
+    _admin_route: TRUE
+
+w3_data_upload.import_data:
+  path: '/import_data'
+  defaults:
+    _title: 'Import Data'
+    _controller: '\Drupal\w3_data_upload\Controller\ImportDataController::content'
+  requirements:
+    _permission: 'Import form'

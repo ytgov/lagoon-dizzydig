@@ -1,0 +1,19 @@
+.path-taxonomy {
+    .breadcrumb {
+        @apply w-full;
+    }
+
+    main {
+        .row {
+            @apply pt-0;
+        }
+    }
+
+    .result-summary {
+        @apply mt-3.75;
+    }
+
+    #block-mainpagecontent {
+        @apply mb-5;
+    }
+}

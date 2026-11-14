@@ -1,0 +1,17 @@
+.region-sidebar-first {
+  h2.block-title {
+    @apply pb-2 pt-4;
+    @apply text-default-base;
+  }
+
+  #block-social-share {
+    h2.block-title {
+      @apply mb-5 pb-3 pt-2;
+    }
+
+    .a2a_svg {
+      @apply rounded-full;
+      @apply p-1;
+    }
+  }
+}

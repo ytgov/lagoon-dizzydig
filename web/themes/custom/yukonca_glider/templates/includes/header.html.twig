@@ -1,0 +1,60 @@
+<header id="navbar" role="banner" class="">
+
+  <div id="wb-bnr">
+    <div class="container">
+      <div class="row">
+        <div class="site-main-logo col-xs-2">
+                                <a href="/en/">
+                              <object id="header-logo" data="/themes/custom/yukonca_glider/logo.svg" role="img" type="image/svg+xml" alt="WxT Logo" tabindex="-1">
+                  <img alt="WxT Logo" src="/themes/custom/yukonca_glider/logo.png">
+                </object>
+                          </a>
+                            </div>
+
+        <div class="site-nav-toggle col-xs-10">
+          <div class="row">
+              <section id="wb-lng" class="header-lang-toggle">
+                <span></span>
+                {{ page.language }}  
+              </section>
+              <button href="javascript:void(0)" class="" aria-controls="global-nav" aria-haspopup="true" id="menu-button" title="Search and menus" aria-label="Menu collapsed">
+                  <span class="menu-icon" aria-hidden="true">
+                    <svg width="30" height="30" viewBox="0 0 30 30" xmlns="http://www.w3.org/2000/svg"><g fill="#323232" fill-rule="evenodd"><rect width="30" height="6" rx="2"></rect><rect y="12" width="30" height="6" rx="2"></rect><rect y="24" width="30" height="6" rx="2"></rect></g></svg>
+                  </span>
+                <p class="gov-serv">Menu</p>
+                <span>
+                                  </span>
+              </button>
+          </div>
+        </div>
+        <nav id="global-nav" aria-label="Main navigation" role="navigation" aria-hidden="true">
+          <header>
+            <button href="javascript:void(0)" class="closebtn" tabindex="-1">close              <svg viewBox="0 0 40 40">
+                <path class="close-x" d="M 10,10 L 30,30 M 30,10 L 10,30"></path>
+              </svg>
+            </button>
+            <!-- Set the header here for campaign pages OR ... -->
+              <h3 class="gov-serv-h3">Digital Service Delivery Guide</h3>
+          </header>
+          <h2 class="visuallyhidden">Topics Menu</h2>
+          {{ page.header_menu }}
+            
+        </nav>
+        <span class="global-nav_overlay" role="button" tabindex="0" id="a11y-toggle-2" aria-hidden="true">
+          <span class="visually-hidden"> Council Services</span>
+        </span>
+      </div>
+    </div>
+  </div>
+    <div class="header-search-bar">
+    <div class="container">
+      <div class="row">
+          <section id="wb-srch" class="col-sm-6 col-sm-offset-3 header-search">
+            <h2>Search</h2>
+            {{ page.search }}
+              
+          </section>
+      </div>
+    </div>
+  </div>
+    </header>

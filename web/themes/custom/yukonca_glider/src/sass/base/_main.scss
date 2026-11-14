@@ -1,0 +1,422 @@
+@layer base {
+  main {
+    @apply bg-transparent;
+  }
+
+  .appearance-auto {
+    appearance: auto;
+  }
+}
+
+.field--label-inline {
+    .field__label {
+        @apply pr-1;
+    }
+}
+
+.collapse {
+  visibility: visible;
+
+  &:not(.show) {
+    display: none;
+  }
+}
+
+
+/* Issue #211 */
+
+h1#heading {
+  @apply text-page-heading font-light ;
+}
+
+/* Issue #211 End */
+
+.view-content {
+  .views-row {
+    .views-field-title {
+      a {
+        @apply mb-5 font-medium block;
+      }
+    }   
+  }   
+}
+
+/* Custom SCSS */
+
+.hero {
+  &--image {
+    @apply min-h-[120px] flex items-center;
+
+    .image {
+        @apply z-10;
+    }
+    
+    #heading {
+      @apply font-medium max-w-[calc(60%-80px)] z-10;
+    }
+  }
+}
+
+.view {
+  &.view-what-are-you-looking-for-landing-page-l2 {
+    @apply pb-24 pt-[30px];
+
+    .view-header {
+      @apply mb-0;
+
+      h4 {
+        @apply text-lg pb-2.5 mb-3 mt-3.75 border-b border-gray-lightborder leading-1.1;
+      }
+    }
+  }
+}
+
+.callout-card {
+  .content {
+    p {
+      &:last-child {
+        @apply mb-0;
+      }
+    }
+  }
+}
+
+/* Start Issue 183 */
+
+.single-news-release {
+  @apply mb-[50px];
+
+  .field__label {
+    @apply my-3.75;
+  }
+}
+
+/* End Issue 183 */
+
+[lang="fr"] {
+    .field--label-inline {
+        .field__label {
+            &:after {
+                @apply pl-1;
+            }
+        }
+    }
+}
+
+.field {
+  &.field--name-field-popular-links {
+    .field__item {
+      @apply m-1 min-h-[80px];
+
+      .quicklink-card {
+        a {
+          @apply p-5;
+
+          &:hover {
+            @apply border-blue-200;
+          }
+        }
+      }
+    }
+  }
+  
+  &.news-field-featured-image {
+    img {
+      @apply float-right ml-24 mb-12;
+    }
+  }
+}
+
+.region {
+  // Start Sidebar design
+  &.region-sidebar-first {
+    .block-menu {
+      .block-title {
+        @apply font-medium py-3.75 my-3.75 text-lg leading-1.1;
+      }
+      
+      > .menu {
+        @apply ml-0;
+        @apply border-solid border-0 border-t-[12px] border-yellow;
+        
+        > .menu-item {
+          @apply pt-0 list-none appearance-auto;
+
+          [data-drupal-link-system-path] {
+            @apply py-3.75 px-[10px] inline-block w-full;
+          }
+
+          &::marker {
+            @apply hidden;
+          }
+
+          &:nth-child(odd) {
+            > [data-drupal-link-system-path] {
+              @apply bg-gray-light;
+            }
+          }
+
+          >.menu {
+            >.menu-item {
+              list-style: none;
+
+              [data-drupal-link-system-path] {
+                @apply flex;
+
+                &:before {
+                  padding-right: 10px;
+                  content: ">";
+                }
+
+                &.is-active {
+                  @apply font-semibold text-blue-500;
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+  // End Sidebar design
+}
+
+.page-node-type-basic-page {
+    aside {
+        .filters {
+            form {
+                select {
+                    @apply text-[#555555];
+                }
+            }
+        }
+    }
+    
+    .carousel {
+        @apply min-h-[375px];
+
+        .carousel-item {
+            @apply min-h-[375px];
+
+            div {
+                @apply min-h-[375px];
+            }
+            
+            img {
+                max-width: 100% !important;
+            }
+            
+            .field--name-field-title {
+                @apply text-[22px] leading-1.1;
+            }
+        }
+        
+        .featured-btn-group {
+            button {
+                @apply border-gray-lightborder h-9 opacity-100;
+
+                &.prev {
+                    margin-right: 2px;
+                }
+                
+                svg {
+                    @apply w-2
+                }
+            }
+        }
+
+        .field--name-field-image-gallery {
+            @apply h-full;
+
+            .media--type-image {
+                margin: 0 !important;
+            }
+        }
+    }
+    
+  .region {
+    &.region-content {
+      @apply pt-3.75;
+        
+      h2 {
+        @apply pt-10 mt-3.75 mb-[11px] text-[26px] leading-1.1;
+      }
+
+      .node--type-basic-page {
+          .node__content {
+            >p {
+              @apply mb-[11px];
+            }
+      
+            .accordion {
+              @apply mb-[23px];
+            }
+      
+            .field--name-field-related-tasks {
+              @apply my-7.5;
+      
+              .field__label {
+                @apply my-3.75 text-lg border-b-1 border-gray-lightborder;
+              }
+    
+              .field__item {
+                a {
+                  display: block;
+                  @apply py-2.5;
+                }
+              }
+            }
+          }
+          
+          .media {
+              @apply flex flex-col items-center;
+              
+              &.media-wysiwyg-align-left {
+                  @apply float-left mt-3.75 mr-5;
+              }
+
+              img {
+                  &.media-wysiwyg-align-right {
+                      @apply float-right;
+                  }
+              }
+              
+              &.media-wysiwyg-align-right {
+                  @apply float-right ml-5;
+                  
+                  img {
+                    @apply w-[300px] h-auto;
+                  }
+              }
+              
+              &.media-wysiwyg-align-center {
+                  @apply mx-auto text-center;
+              }
+          }
+
+          article {
+              :not(.carousel) {
+                  &.media--type-image {
+                      @apply float-right ml-[100px] mb-[50px];
+                      
+                      @include media-breakpoint-down(md) {
+                        @apply float-none ml-5;
+                      }
+                      
+                      img {
+                        @apply max-w-[300px] h-auto;
+                      }
+                  }
+              }
+          }
+        }
+
+      .page-title {
+        @apply text-3.5xl mt-[15px] mb-[23px] pb-[5px];
+       }
+      
+        .block-views-blockevents-listing-block-events-listing {
+            .block-title {
+                @apply mt-3.75 mb-3 text-[26px];
+            }
+        }
+        
+        .view-find-a-campground-or-recreation-site {
+            .views-row {
+                .node--type-campground-directory-record {
+                    @apply border-b-0 border-t-1 border-gray-lightborder;
+    
+                    .graph-card {
+                        @apply my-0;
+                        
+                        .main-link {
+                            @apply text-lg leading-1.1;
+                            
+                            a:hover {
+                                @apply hover:underline hover:text-blue-500;
+                            }
+                        }
+                    }
+                }
+                
+                &:last-child {
+                    .node--type-campground-directory-record {
+                        @apply border-b-1 border-gray-lightborder;
+                    }
+                }
+            }
+        }
+    }
+  }
+}
+
+.view-events-listing,
+.view-places-listing,
+.view-documents-browse {
+    .applied-filters {
+        @apply mb-4 mt-[6px];
+        
+        .section-title {
+            @apply mb-2 leading-1.1;
+        }
+        
+        .applied-items {
+            .applied-item {
+                @apply relative border border-blue-400 rounded no-underline text-base font-medium inline-block text-blue-400 mb-2 ml-4 py-1.5 pl-3 pr-[38px];
+                @apply hover:text-blue-50 hover:border-blue-50;
+                
+                &:after {
+                    @apply absolute text-sm right-3;
+                    content: "\e014";
+                    font-family: "Glyphicons Halflings", sans-serif;
+                    top: calc(50% - 10px);
+                }
+            }
+        }
+    }
+        
+    .filter-content {
+        .view-empty {
+            @apply pt-[35px] border-t-1 border-gray-lightborder;
+        }
+    }
+}
+
+.webform-submission-page-feedback-node-8252-form {
+  @apply my-5 border-t border-gray-lightborder;
+
+  .yes-no-trigger {
+    @apply inline-flex pt-2.5;
+
+    &.yes-no-trigger-wrapper {
+      legend {
+        span {
+          @apply font-medium text-black;
+        }
+      }
+
+      .fieldset-wrapper {
+        .form-radios {
+          @apply flex;
+
+          .form-type-radio {
+            @apply pl-5;
+          }
+        }
+      }
+    }
+  }
+}
+
+.js {
+  .js-form-wrapper {
+    .js-hide {
+      @apply hidden;
+    }
+  }
+}
+
+/* End Custom SCSS */
+
+@import "partials/accordion";
+@import "partials/peak-times-graph";

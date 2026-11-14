@@ -1,0 +1,26 @@
+uuid: 9fa81b38-25ed-4a47-a079-eb9a3d4e0256
+langcode: en
+status: true
+dependencies:
+  config:
+    - webform.webform.feedback_form
+  module:
+    - webform
+  theme:
+    - yukonca_glider
+id: yukonca_glider_webform
+theme: yukonca_glider
+region: post_content
+weight: 0
+provider: null
+plugin: webform_block
+settings:
+  id: webform_block
+  label: Webform
+  label_display: '0'
+  provider: webform
+  webform_id: feedback_form
+  default_data: ''
+  redirect: false
+  lazy: false
+visibility: {  }

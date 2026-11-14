@@ -1,14 +1,14 @@
 _core:
   default_config_hash: HlN7eAN2N4JIHsYv56V4E7sqC9bS609KwvGFjyD_mgk
 langcode: en
-uuid: 5e08e163-e087-4845-9b7e-5ab6c8f5f173
-name: lagoon-dizzydig
-mail: eservices@yukon.ca
+uuid: 54621a61-b16d-4124-90ee-f5cdc338fab8
+name: 'Digital Service Delivery Guide'
+mail: eservices@gov.yk.ca
 slogan: ''
 page:
   403: ''
   404: ''
-  front: /user/login
+  front: /node
 admin_compact_mode: false
 weight_select_max: 100
 default_langcode: en
