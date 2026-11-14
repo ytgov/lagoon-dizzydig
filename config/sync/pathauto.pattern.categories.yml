@@ -12,11 +12,11 @@ selection_criteria:
   2d620e8c-4050-464c-ac50-e5544beaa02d:
     id: 'entity_bundle:taxonomy_term'
     negate: false
-    uuid: 2d620e8c-4050-464c-ac50-e5544beaa02d
     context_mapping:
       taxonomy_term: taxonomy_term
     bundles:
       categories: categories
+    uuid: 2d620e8c-4050-464c-ac50-e5544beaa02d
 selection_logic: and
 weight: 0
 relationships: {  }
