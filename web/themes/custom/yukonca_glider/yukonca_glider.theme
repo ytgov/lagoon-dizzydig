@@ -6,6 +6,7 @@
  */
 
 use Drupal\Component\Utility\Html;
+use Drupal\Core\Extension\ThemeSettingsProvider;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Render\Markup;
 use Drupal\Core\StringTranslation\ByteSizeMarkup;
@@ -20,10 +21,11 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
  * Implements hook_form_system_theme_settings_alter().
  */
 function yukonca_glider_form_system_theme_settings_alter(&$form, FormStateInterface $form_state) {
+  $footer_text = \Drupal::service(ThemeSettingsProvider::class)->getSetting('Footer_text');
   $form['Footer_text'] = [
     '#type' => 'textfield',
     '#title' => 'Footer Text',
-    '#default_value' => !empty(theme_get_setting('Footer_text')) ? theme_get_setting('Footer_text') : "Government of Yukon",
+    '#default_value' => !empty($footer_text) ? $footer_text : "Government of Yukon",
   ];
 
 }
@@ -463,7 +465,11 @@ function yukonca_glider_preprocess_node__multi_step_page(&$variables) {
   foreach ($section_paragraphs as $paragraph) {
     $variables['tabs']['items'][] = [
       'title' => $paragraph->get('field_title')->getString(),
-      'content' => check_markup($paragraph->get('field_section_content')->value, $paragraph->get('field_section_content')->format),
+      'content' => [
+        '#type' => 'processed_text',
+        '#text' => $paragraph->get('field_section_content')->value,
+        '#format' => $paragraph->get('field_section_content')->format,
+      ],
     ];
   }
 
