@@ -1,6 +1,6 @@
 {
     "name": "ytgov/lagoon-dizzydig",
-    "description": "Starting point for all YG boutique Drupal CMS websites.",
+    "description": "The Digital Service Delivery Guide (a.k.a., DSDG or \"DizzyDig\") is a collection of best-practice guidance and processes for designing and delivering government services that are simple and fast and strive to improve the user experience.",
     "type": "project",
     "license": "MIT",
     "repositories": [

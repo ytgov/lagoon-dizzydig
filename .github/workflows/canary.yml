@@ -1,0 +1,138 @@
+name: Canary
+
+# Copied unchanged into every site made from the template. The only
+# difference is what the site is tested against (see "Choose base"):
+# - in the template: the head of base prodNN and its :NN.x image, so the
+#   template is also tested against the next base release;
+# - in a site: exactly the base release in its composer.lock.
+
+on:
+  push:
+    branches: [ prod, 'prod[0-9]*', 'release-*' ]
+  pull_request:
+    branches: [ prod, 'prod[0-9]*', 'release-*' ]
+  workflow_dispatch:
+
+jobs:
+  canary:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+
+    # Database for the canary site.
+    services:
+      mariadb:
+        image: uselagoon/mariadb-10.11-drupal:26.11.2
+        ports:
+          - 3306:3306
+
+    steps:
+      - name: Checkout site
+        uses: actions/checkout@v7
+        with:
+          path: site
+
+      # A site pins a base release: a composer version in composer.lock and
+      # the same image tag in lagoon/*.dockerfile. They must agree.
+      - name: Check the base release is consistent
+        working-directory: site
+        run: |
+          locked=$(jq -r '.packages[] | select(.name == "ytgov/lagoon-boutique-base-image") | .version' composer.lock)
+          if ! [[ "$locked" =~ ^v([0-9]+)\.[0-9]+\.[0-9]+$ ]]; then
+            echo "::error file=composer.lock::composer.lock has base $locked, not a vX.Y.Z release"
+            exit 1
+          fi
+          echo "LOCKED=$locked" >> "$GITHUB_ENV"
+          echo "MAJOR=${BASH_REMATCH[1]}" >> "$GITHUB_ENV"
+          status=0
+          while IFS=: read -r file line tag; do
+            if [ "$tag" != "${locked#v}" ]; then
+              echo "::error file=$file,line=$line::Base image tag :$tag does not match composer.lock ($locked)"
+              status=1
+            fi
+          done < <(grep -n -o 'lagoon-boutique-base-image-[a-z]*:[^ ]*' lagoon/*.dockerfile |
+            sed 's/:lagoon-boutique-base-image-[a-z]*:/:/')
+          [ "$status" = 0 ] && echo "composer.lock and every base image use $locked"
+          exit $status
+
+      - name: Choose base
+        run: |
+          if [ "$GITHUB_REPOSITORY" = ytgov/lagoon-boutique-template ]; then
+            # Template prodNN always builds on base prodNN. Test a PR against
+            # its target branch and a push against its own branch.
+            if [ "$GITHUB_EVENT_NAME" = pull_request ]; then
+              ref="$GITHUB_BASE_REF"
+            else
+              ref="$GITHUB_REF_NAME"
+            fi
+            if ! [[ "$ref" =~ ^prod([0-9]+)$ ]]; then
+              echo "::error::$ref is not a prodNN branch, so there is no matching base branch"
+              exit 1
+            fi
+            if [ "${BASH_REMATCH[1]}" != "$MAJOR" ]; then
+              echo "::error::Branch $ref is locked to base $LOCKED"
+              exit 1
+            fi
+            image_tag="$MAJOR.x"
+          else
+            ref="$LOCKED"
+            image_tag="${LOCKED#v}"
+          fi
+          echo "Testing against base $ref (:$image_tag)"
+          echo "BASE_REF=$ref" >> "$GITHUB_ENV"
+          echo "CLI_IMAGE=ghcr.io/ytgov/lagoon-boutique-base-image-cli:$image_tag" >> "$GITHUB_ENV"
+
+      - name: Checkout base
+        uses: actions/checkout@v7
+        with:
+          repository: ytgov/lagoon-boutique-base-image
+          ref: ${{ env.BASE_REF }}
+          path: base
+
+      - name: Pull base CLI image
+        run: docker pull "$CLI_IMAGE"
+
+      - name: Validate composer.json and composer.lock
+        run: >-
+          docker run --rm -u "$(id -u):0" -e HOME=/tmp
+          -v "$GITHUB_WORKSPACE/site:/app" -w /app "$CLI_IMAGE"
+          composer validate --no-check-publish
+
+      # Sites should track the latest base release. A newer release is only a
+      # warning: Dependabot proposes the bump.
+      - name: Check for a newer base release
+        run: |
+          latest=$(git ls-remote --tags --refs https://github.com/ytgov/lagoon-boutique-base-image.git "v$MAJOR.*" |
+            sed 's|.*refs/tags/||' | grep -E '^v[0-9]+\.[0-9]+\.[0-9]+$' | sort -V | tail -1)
+          if [ "$latest" = "$LOCKED" ]; then
+            echo "$LOCKED is the latest base release"
+          else
+            echo "::warning file=composer.lock::This site uses base $LOCKED, but $latest is released"
+          fi
+
+      # Builds what Lagoon builds, from the site's own composer.lock.
+      - name: Build site images
+        working-directory: site
+        run: |
+          docker build -f lagoon/cli.dockerfile -t canary-cli .
+          docker build -f lagoon/nginx.dockerfile --build-arg CLI_IMAGE=canary-cli -t canary-nginx .
+          docker build -f lagoon/php.dockerfile --build-arg CLI_IMAGE=canary-cli -t canary-php .
+
+      # Installs the site from its working tree and config against the base
+      # chosen above, then checks it. See scripts/canary.sh in the base repo.
+      - name: Canary
+        env:
+          COMPOSER_AUTH: '{"github-oauth": {"github.com": "${{ secrets.GITHUB_TOKEN }}"}}'
+        run: >-
+          base/scripts/canary.sh docker
+          --image "$CLI_IMAGE"
+          --template "$GITHUB_WORKSPACE/site"
+          --workdir "$RUNNER_TEMP/canary"
+
+      - name: Upload canary log
+        if: failure()
+        uses: actions/upload-artifact@v7
+        with:
+          name: canary-log
+          path: ${{ runner.temp }}/canary/canary.log
+          if-no-files-found: ignore

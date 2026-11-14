@@ -7,7 +7,7 @@ x-volumes:
     - files:/app/web/sites/default/files
 
 x-environment: &default-environment
-  LAGOON_ROUTE: &default-url http://lagoon-dizzydig.docker.amazee.io
+  LAGOON_ROUTE: &default-url http://${COMPOSE_PROJECT_NAME:-lagoon-dizzydig}.docker.amazee.io
   # Uncomment if you like to have the system behave like in production
   #LAGOON_ENVIRONMENT_TYPE: production
   # Uncomment to enable xdebug and then restart via `docker-compose up -d`
@@ -26,9 +26,8 @@ services:
     build:
       context: .
       dockerfile: lagoon/cli.dockerfile
-    image: &cli-image lagoon-dizzydig-cli
+    image: &cli-image ${COMPOSE_PROJECT_NAME:-lagoon-dizzydig}-cli
     labels:
-      lagoon.base.image: ghcr.io/ytgov/lagoon-boutique-base-image-cli:11.0.0
       lagoon.type: cli-persistent
       lagoon.persistent.name: nginx
       lagoon.persistent: /app/web/sites/default/files/
@@ -47,7 +46,6 @@ services:
       args:
         CLI_IMAGE: *cli-image
     labels:
-      lagoon.base.image: ghcr.io/ytgov/lagoon-boutique-base-image-nginx:11.0.0
       lagoon.type: nginx-php-persistent
       lagoon.persistent: /app/web/sites/default/files/
       lando.type: nginx-drupal
@@ -68,7 +66,6 @@ services:
       args:
         CLI_IMAGE: *cli-image
     labels:
-      lagoon.base.image: ghcr.io/ytgov/lagoon-boutique-base-image-fpm:11.0.0
       lagoon.type: nginx-php-persistent
       lagoon.name: nginx
       lagoon.persistent: /app/web/sites/default/files/
