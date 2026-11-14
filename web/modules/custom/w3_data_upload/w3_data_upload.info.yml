@@ -1,7 +1,7 @@
 name: W3 Basic page data upload
 type: module
 description: 'W3 Basic page data upload'
-core_version_requirement: ^10 || ^9
+core_version_requirement: ^10.3 || ^11
 package: 'W3'
 
 dependencies:
