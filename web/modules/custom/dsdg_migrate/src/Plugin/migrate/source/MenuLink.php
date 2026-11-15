@@ -65,7 +65,7 @@ class MenuLink extends CoreMenuLink {
   public function prepareRow(Row $row) {
     $result = parent::prepareRow($row);
 
-    // Links to French pages that dsdg_content_page_translation skipped as
+    // Links to French pages that dsdg_content_page_revision skipped as
     // superseded duplicates are skipped too. Only the main migration reports
     // them.
     if (preg_match('#^node/(\d+)$#', $row->getSourceProperty('link_path'), $match) && in_array($match[1], $this->supersededNodes())) {

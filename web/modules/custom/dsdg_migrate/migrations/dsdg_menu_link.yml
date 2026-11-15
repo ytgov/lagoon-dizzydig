@@ -45,4 +45,4 @@ destination:
   no_stub: true
 migration_dependencies:
   required:
-    - dsdg_content_page
+    - dsdg_content_page_revision

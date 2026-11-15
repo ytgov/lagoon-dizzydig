@@ -4,6 +4,8 @@ description: 'Migrates the Drupal 7 Digital Service Delivery Guide into this sit
 core_version_requirement: ^11.3
 package: Migration
 dependencies:
+  - drupal:content_moderation
+  - drupal:content_translation
   - drupal:file
   - drupal:media
   - drupal:migrate

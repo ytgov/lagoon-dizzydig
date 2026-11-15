@@ -9,11 +9,12 @@ use Drupal\user\Plugin\migrate\source\d7\User;
  * D7 DSDG staff accounts.
  *
  * Only YG staff accounts (@yukon.ca or @gov.yk.ca) are returned, and of those
- * only accounts that are active or own content:
+ * only accounts that are active or authored content:
  * - Active: enabled and signed in on or after active_since. Migrated as active.
- * - Inactive but owning a node: migrated as blocked, to keep authorship.
- * - Inactive with no nodes: not returned.
- * Vendor accounts own no D7 content, so none is reassigned.
+ * - Inactive but owning a node or authoring a node revision: migrated as
+ *   blocked, to keep authorship in pages and their revision history.
+ * - Inactive with neither: not returned.
+ * Vendor accounts aren't migrated; their revisions go to the admin account.
  *
  * Adds two source properties:
  * - dsdg_status: 1 for active accounts, 0 otherwise.
@@ -49,15 +50,18 @@ class StaffUser extends User {
       ->condition('u.mail', '%@gov.yk.ca', 'LIKE');
     $owns_content = $this->select('node', 'n')
       ->fields('n', ['uid']);
-    $active_or_owner = $query->orConditionGroup()
+    $authored_revision = $this->select('node_revision', 'nr')
+      ->fields('nr', ['uid']);
+    $active_or_author = $query->orConditionGroup()
       ->condition($query->andConditionGroup()
         ->condition('u.status', 1)
         ->condition('u.login', $this->activeSince(), '>='))
-      ->condition('u.uid', $owns_content, 'IN');
+      ->condition('u.uid', $owns_content, 'IN')
+      ->condition('u.uid', $authored_revision, 'IN');
     return $query
       ->condition('u.uid', 1, '>')
       ->condition($domains)
-      ->condition($active_or_owner);
+      ->condition($active_or_author);
   }
 
   /**

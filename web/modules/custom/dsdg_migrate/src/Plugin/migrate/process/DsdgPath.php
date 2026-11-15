@@ -17,7 +17,7 @@ use Drupal\migrate\Row;
  *   merged into.
  * - taxonomy/term/N for a wetkit_categories term becomes /taxonomy/term/N.
  *
- * Anything else skips the row, with a message. dsdg_content_page and
+ * Anything else skips the row, with a message. dsdg_content_page_revision and
  * dsdg_category keep D7 IDs, so no lookups are needed.
  *
  * Usage:

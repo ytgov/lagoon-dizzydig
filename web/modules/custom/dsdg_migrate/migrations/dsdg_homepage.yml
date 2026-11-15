@@ -19,6 +19,11 @@ process:
   nid:
     plugin: default_value
     default_value: 1
+  # dsdg_content_page_revision keeps D7 revision IDs, which start at 361, so
+  # an automatic revision ID could clash with one.
+  vid:
+    plugin: default_value
+    default_value: 1
   type:
     plugin: default_value
     default_value: content_page

@@ -22,5 +22,4 @@ destination:
 migration_dependencies:
   required:
     - dsdg_category
-    - dsdg_content_page
-    - dsdg_content_page_translation
+    - dsdg_content_page_revision

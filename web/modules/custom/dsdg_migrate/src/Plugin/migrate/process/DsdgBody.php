@@ -93,7 +93,7 @@ class DsdgBody extends ProcessPluginBase {
         // Translations are merged into their source node in D11.
         $set = $node->tnid ?: $node->nid;
         // The published translation in the body's language (the one
-        // DsdgSkipSupersededTranslation keeps). Visitors can't see an
+        // SupersededTranslationsTrait keeps). Visitors can't see an
         // unpublished one, so link to the node itself instead.
         $target = $db->query('SELECT nid, language FROM {node} WHERE (nid = :set OR tnid = :set) AND language = :langcode AND status = 1 ORDER BY changed DESC, nid DESC', [
           ':set' => $set,

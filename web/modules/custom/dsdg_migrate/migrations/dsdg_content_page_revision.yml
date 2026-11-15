@@ -1,19 +1,22 @@
-id: dsdg_content_page
-label: 'Content pages (source language)'
+id: dsdg_content_page_revision
+label: 'Content pages, with their revision history'
 migration_tags:
   - dsdg
 source:
-  # Without translations, d7_node returns each translation set's source node:
-  # English, or French when there's no English version. The 11 French-only
-  # pages are kept as French pages, because French content links to them;
-  # editors can give them English pages or delete them later. Their menu
-  # links aren't migrated (see dsdg_menu_link).
-  plugin: d7_node
+  # Every revision of every content_page node, in the order D7 saved them,
+  # English and French together (see the plugin for what's left out). D7
+  # translations are separate nodes linked by tnid; their revisions become
+  # revisions of one D11 page. The 11 French-only pages are kept as French
+  # pages, because French content links to them; editors can give them
+  # English pages or delete them later. Their menu links aren't migrated (see
+  # dsdg_menu_link).
+  plugin: dsdg_content_page_revision
   node_type: content_page
 process:
-  # D7 node IDs and UUIDs are kept, so D7 alias sources (node/N) and links
-  # stay valid without lookups.
-  nid: nid
+  # D7 node IDs (of source nodes), revision IDs and UUIDs are kept, so D7
+  # alias sources (node/N) and links stay valid without lookups.
+  nid: dsdg_nid
+  vid: vid
   uuid: uuid
   type:
     plugin: default_value
@@ -24,6 +27,7 @@ process:
     map:
       und: en
     bypass: true
+  content_translation_source: dsdg_translation_source
   title: title
   # The D7 author's migrated account, or D11's admin (uid 1) for accounts that
   # weren't migrated.
@@ -36,21 +40,30 @@ process:
     -
       plugin: default_value
       default_value: 1
-  revision_uid: '@uid'
-  status: status
-  # The editorial workflow applies to content pages, and without a state
-  # content moderation saves a page as a draft (unpublished). This migrates
-  # the live D7 revision (node.vid), whose workbench state matches its status:
-  # published, or draft. Newer drafts and pages in review come with the
-  # revision history.
+  revision_uid:
+    -
+      plugin: migration_lookup
+      migration: dsdg_user
+      source: revision_uid
+      no_stub: true
+    -
+      plugin: default_value
+      default_value: 1
+  revision_timestamp: timestamp
+  revision_log: log
+  # The editorial workflow applies to content pages. Content moderation sets
+  # the published status from the state, and the destination decides which
+  # revision is the default one, as content moderation would.
   moderation_state:
     plugin: static_map
-    source: status
+    source: dsdg_workbench_state
     map:
-      1: published
-      0: draft
+      draft: draft
+      needs_review: ready_for_review
+      published: published
+      unpublished: archived
   created: created
-  changed: changed
+  changed: timestamp
   promote: promote
   sticky: sticky
   body/value:
@@ -73,6 +86,7 @@ process:
         migration: dsdg_category
         source: tid
         no_stub: true
+  # Untranslatable: the destination takes them from the source language.
   field_attachments:
     plugin: sub_process
     source: field_attachments
@@ -91,13 +105,14 @@ process:
         source: value
         from_format: 'Y-m-d H:i:s'
         to_format: 'Y-m-d'
+  # The D7 node of this revision: the source node, or the translation node.
   field_old_nid: nid
   # D7 aliases are migrated by dsdg_url_alias; don't let pathauto make new ones.
   path/pathauto:
     plugin: default_value
     default_value: 0
 destination:
-  plugin: entity:node
+  plugin: dsdg_content_page_revision
 migration_dependencies:
   required:
     - dsdg_user
