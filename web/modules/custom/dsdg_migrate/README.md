@@ -76,6 +76,7 @@ reports 2 failures.
 
 | Migration | From D7 | To D11 |
 |---|---|---|
+| `dsdg_user` | staff accounts (see below) | users with no password (D7 user IDs kept) |
 | `dsdg_category` | `wetkit_categories` terms | `categories` terms (D7 term IDs kept) |
 | `dsdg_file` | public files | files (D7 file IDs, URIs and UUIDs kept) |
 | `dsdg_attachment_media` | files in `field_attachments` | `file` media |
@@ -94,10 +95,20 @@ Page bodies are rewritten by the `dsdg_body` process plugin:
 Where a D7 translation set has several French nodes, only one is kept (see
 `DsdgSkipSupersededTranslation`).
 
+Accounts (`dsdg_user`, source plugin `StaffUser`):
+
+- Only YG staff (@yukon.ca or @gov.yk.ca). Vendor accounts aren't migrated.
+- Active (enabled, signed in since `active_since`, 2025-01-01) → active.
+  Inactive but owning a page → blocked, so the page keeps its author.
+  Inactive with no pages → not migrated.
+- `@gov.yk.ca` becomes `@yukon.ca`.
+- No passwords. Staff sign in with MyYukon, which links to the account by
+  email (`openid_connect` `connect_existing_users`).
+- Roles map by name: administrator, editor, publisher, translator.
+- Pages by an author who wasn't migrated go to the admin account (uid 1).
+
 ## Not migrated yet
 
-- Authors: every item belongs to user 1. D7 users aren't needed once staff
-  sign in with MyYukon SSO.
 - Revisions (only the current version) and the workbench moderation state
   (published or unpublished only).
 - French category names (D7 translates them through the interface, i18n

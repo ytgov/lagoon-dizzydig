@@ -1,0 +1,40 @@
+id: dsdg_user
+label: 'Staff accounts (no passwords)'
+migration_tags:
+  - dsdg
+source:
+  plugin: dsdg_staff_user
+  # A sign-in on or after this date makes an account active. See the plugin
+  # for which accounts are migrated.
+  active_since: '2025-01-01'
+process:
+  # D7 user IDs are kept. D7 has no uid 1, so D11's admin account is safe.
+  uid: uid
+  name: name
+  # All YG staff now have @yukon.ca addresses, which MyYukon sign-in matches.
+  mail:
+    plugin: str_replace
+    source: mail
+    search: '@gov.yk.ca'
+    replace: '@yukon.ca'
+    case_insensitive: true
+  init: '@mail'
+  # No password: staff sign in with MyYukon, which links to this account by
+  # email (openid_connect connect_existing_users).
+  status: dsdg_status
+  roles: dsdg_roles
+  created: created
+  access: access
+  login: login
+  timezone: timezone
+  langcode:
+    plugin: default_value
+    source: language
+    default_value: en
+  preferred_langcode:
+    plugin: default_value
+    source: language
+    default_value: en
+destination:
+  plugin: entity:user
+migration_dependencies: {}
