@@ -1,0 +1,52 @@
+id: dsdg_homepage
+label: 'Homepage (D7 "Homepage Block")'
+migration_tags:
+  - dsdg
+source:
+  # D7's homepage is custom block 1, placed in the content region on <front>.
+  # It becomes a content page, node 1 (unused in D7), which system.site
+  # page.front points at.
+  plugin: d7_block_custom
+  constants:
+    title: 'Digital Service Delivery Guide'
+process:
+  _homepage_block_only:
+    plugin: skip_on_value
+    source: bid
+    not_equals: true
+    value: 1
+    method: row
+  nid:
+    plugin: default_value
+    default_value: 1
+  type:
+    plugin: default_value
+    default_value: content_page
+  langcode:
+    plugin: default_value
+    default_value: en
+  # The block's title, which D7 displayed.
+  title: constants/title
+  uid:
+    plugin: default_value
+    default_value: 1
+  status:
+    plugin: default_value
+    default_value: 1
+  promote:
+    plugin: default_value
+    default_value: 0
+  body/value:
+    plugin: dsdg_body
+    source: body
+  body/format:
+    plugin: default_value
+    default_value: full_html
+  path/pathauto:
+    plugin: default_value
+    default_value: 0
+destination:
+  plugin: entity:node
+migration_dependencies:
+  required:
+    - dsdg_user

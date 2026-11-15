@@ -1,0 +1,47 @@
+id: dsdg_homepage_translation
+label: 'Homepage (French)'
+migration_tags:
+  - dsdg
+source:
+  # D7 translates the block's title and body through i18n_block. The source
+  # returns one row per translated property, each with both translations.
+  plugin: d7_block_custom_translation
+process:
+  _homepage_block_only:
+    plugin: skip_on_value
+    source: bid
+    not_equals: true
+    value: 1
+    method: row
+  nid:
+    plugin: default_value
+    default_value: 1
+  type:
+    plugin: default_value
+    default_value: content_page
+  langcode: language
+  content_translation_source:
+    plugin: default_value
+    default_value: en
+  title: title_translated
+  uid:
+    plugin: default_value
+    default_value: 1
+  status:
+    plugin: default_value
+    default_value: 1
+  body/value:
+    plugin: dsdg_body
+    source: body_translated
+  body/format:
+    plugin: default_value
+    default_value: full_html
+  path/pathauto:
+    plugin: default_value
+    default_value: 0
+destination:
+  plugin: entity:node
+  translations: true
+migration_dependencies:
+  required:
+    - dsdg_homepage

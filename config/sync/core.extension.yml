@@ -97,7 +97,6 @@ module:
   views_bulk_operations: 0
   views_infinite_scroll: 0
   views_ui: 0
-  w3_data_upload: 0
   webform: 0
   webform_ui: 0
   workflows: 0

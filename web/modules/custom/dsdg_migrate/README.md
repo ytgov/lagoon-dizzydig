@@ -77,6 +77,7 @@ reports 2 failures.
 | Migration | From D7 | To D11 |
 |---|---|---|
 | `dsdg_user` | staff accounts (see below) | users with no password (D7 user IDs kept) |
+| `dsdg_homepage`, `dsdg_homepage_translation` | custom block 1, "Homepage Block" (en, fr via i18n_block) | `content_page` node 1, the front page (`system.site` `page.front: /node/1`) |
 | `dsdg_category` | `wetkit_categories` terms | `categories` terms (D7 term IDs kept) |
 | `dsdg_category_translation` | French term names (i18n "localize" mode) | category translations |
 | `dsdg_file` | public files | files (D7 file IDs, URIs and UUIDs kept) |
@@ -90,8 +91,9 @@ reports 2 failures.
 Page bodies are rewritten by the `dsdg_body` process plugin:
 
 - `[uuid-link:node:UUID]` becomes the linked page's D7 URL (`/{lang}/{alias}`).
-  Links to D7 nodes that no longer exist are left as is, with a migration
-  message.
+  As D7 renders these links in the current language, a French body links to
+  the page's published French translation when there is one. Links to D7 nodes
+  that no longer exist are left as is, with a migration message.
 - `[[{"fid":…}]]` media tags become `<img>` (or a link for other files)
   pointing at the migrated file.
 
@@ -128,4 +130,4 @@ Accounts (`dsdg_user`, source plugin `StaffUser`):
   (published or unpublished only).
 - D7's "Navigation" (31 stray page links), "Sidebar", "User menu" and
   "Management" menus.
-- The homepage block, the two webforms and the one `wetkit_page` node.
+- The two webforms and the one `wetkit_page` node.

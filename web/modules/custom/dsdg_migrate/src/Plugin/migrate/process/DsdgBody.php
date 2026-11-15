@@ -13,7 +13,10 @@ use Drupal\migrate\Row;
  * Rewrites D7 DSDG body markup for D11.
  *
  * - [uuid-link:node:UUID] becomes the linked page's D7 URL (/{lang}/{alias}),
- *   which dsdg_url_alias migrates unchanged.
+ *   which dsdg_url_alias migrates unchanged. Like D7, which renders these
+ *   links in the current language, it links to the page's published
+ *   translation in the body's language (the row's "language", English by
+ *   default) if there is one, and to the page in its own language otherwise.
  * - [[{"fid":...}]] media tags become an <img> for images, or a link for other
  *   files, with data-entity-type/uuid so editor_file_reference tracks usage.
  *   dsdg_file keeps D7 file IDs, URIs and UUIDs.
@@ -31,7 +34,7 @@ use Drupal\migrate\Row;
 class DsdgBody extends ProcessPluginBase {
 
   /**
-   * URLs of D7 nodes, keyed by UUID.
+   * URLs of D7 nodes, keyed by language and UUID.
    *
    * @var string[]
    */
@@ -44,8 +47,9 @@ class DsdgBody extends ProcessPluginBase {
     if (!is_string($value) || $value === '') {
       return $value;
     }
-    $value = preg_replace_callback('/\[uuid-link:node:([0-9a-f-]{36})\]/', function ($match) use ($migrate_executable) {
-      $url = $this->nodeUrl($match[1]);
+    $langcode = $this->langcode((string) $row->getSourceProperty('language'));
+    $value = preg_replace_callback('/\[uuid-link:node:([0-9a-f-]{36})\]/', function ($match) use ($migrate_executable, $langcode) {
+      $url = $this->nodeUrl($match[1], $langcode);
       if ($url === NULL) {
         $migrate_executable->saveMessage("Link to unknown D7 node {$match[1]} left as is.");
         return $match[0];
@@ -65,27 +69,45 @@ class DsdgBody extends ProcessPluginBase {
   }
 
   /**
-   * Returns the D7 URL of a node, or NULL if there's no such node.
+   * Returns a D7 language code, with language-neutral codes as English.
    */
-  protected function nodeUrl(string $uuid): ?string {
-    if (!array_key_exists($uuid, static::$nodeUrls)) {
+  protected function langcode(string $langcode): string {
+    return in_array($langcode, ['und', 'zxx', ''], TRUE) ? 'en' : $langcode;
+  }
+
+  /**
+   * Returns the URL of a D7 node for a body in a language.
+   *
+   * The URL is for the node's translation in that language if there is one,
+   * otherwise for the node itself. NULL if there's no such node.
+   */
+  protected function nodeUrl(string $uuid, string $langcode): ?string {
+    $key = $langcode . ':' . $uuid;
+    if (!array_key_exists($key, static::$nodeUrls)) {
       $db = Database::getConnection('default', 'migrate');
       $node = $db->query('SELECT nid, tnid, language FROM {node} WHERE uuid = :uuid', [':uuid' => $uuid])->fetchObject();
       if (!$node) {
-        static::$nodeUrls[$uuid] = NULL;
+        static::$nodeUrls[$key] = NULL;
       }
       else {
-        $langcode = in_array($node->language, ['und', 'zxx', ''], TRUE) ? 'en' : $node->language;
-        $alias = $db->query("SELECT alias FROM {url_alias} WHERE source = :source AND language IN (:langcode, 'und') ORDER BY pid DESC", [
-          ':source' => 'node/' . $node->nid,
-          ':langcode' => $langcode,
-        ])->fetchField();
         // Translations are merged into their source node in D11.
-        $nid = $node->tnid && $node->tnid != $node->nid ? $node->tnid : $node->nid;
-        static::$nodeUrls[$uuid] = '/' . $langcode . '/' . ($alias ?: 'node/' . $nid);
+        $set = $node->tnid ?: $node->nid;
+        // The published translation in the body's language (the one
+        // DsdgSkipSupersededTranslation keeps). Visitors can't see an
+        // unpublished one, so link to the node itself instead.
+        $target = $db->query('SELECT nid, language FROM {node} WHERE (nid = :set OR tnid = :set) AND language = :langcode AND status = 1 ORDER BY changed DESC, nid DESC', [
+          ':set' => $set,
+          ':langcode' => $langcode,
+        ])->fetchObject() ?: $node;
+        $target_langcode = $this->langcode($target->language);
+        $alias = $db->query("SELECT alias FROM {url_alias} WHERE source = :source AND language IN (:langcode, 'und') ORDER BY pid DESC", [
+          ':source' => 'node/' . $target->nid,
+          ':langcode' => $target_langcode,
+        ])->fetchField();
+        static::$nodeUrls[$key] = '/' . $target_langcode . '/' . ($alias ?: 'node/' . $set);
       }
     }
-    return static::$nodeUrls[$uuid];
+    return static::$nodeUrls[$key];
   }
 
   /**

@@ -1,7 +1,0 @@
-block.settings.custom_block_with_body:
-  type: block_settings
-  label: 'Example configurable text block configuration'
-  mapping:
-    block_title:
-      type: textarea
-      label: 'Block content'
