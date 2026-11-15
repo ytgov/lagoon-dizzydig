@@ -82,7 +82,7 @@ reports 2 failures.
 | `dsdg_category_translation` | French term names (i18n "localize" mode) | category translations |
 | `dsdg_file` | public files | files (D7 file IDs, URIs and UUIDs kept) |
 | `dsdg_attachment_media` | files in `field_attachments` | `file` media |
-| `dsdg_content_page` | English `content_page` nodes (the 11 French-only pages are left out) | `content_page` nodes (D7 node IDs and UUIDs kept) |
+| `dsdg_content_page` | `content_page` nodes in their source language (English, or French for the 11 French-only pages) | `content_page` nodes (D7 node IDs and UUIDs kept) |
 | `dsdg_content_page_translation` | translation nodes (linked by `tnid`) | translations of the source node |
 | `dsdg_url_alias` | page and category aliases | path aliases, unchanged |
 | `dsdg_menu_link` | `main-menu` and `menu-wet-footer` links (English) | `main` and `footer` menu links |
@@ -105,8 +105,10 @@ so a French link becomes a translation of its English pair. A link to a page
 pairs with the English link to that page's source node; the footer's external
 links pair through `pairs` in both migration files. Then:
 
-- French links with no English pair (to the French-only pages, which aren't
-  migrated) and links to superseded French pages are skipped.
+- French links with no English pair (to the 11 French-only pages, which
+  would show in English menus too) and links to superseded French pages are
+  skipped. The French-only pages are migrated, because French content links to
+  them; editors can give them English pages or delete them.
 - Translations get their own URL, which needs this site's
   `menu_link_url_translation` module (core's menu link URL isn't
   translatable). Page links are `entity:node/N` in both languages; the French

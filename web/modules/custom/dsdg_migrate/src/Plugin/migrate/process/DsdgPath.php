@@ -38,7 +38,7 @@ class DsdgPath extends ProcessPluginBase {
     if (preg_match('#^node/(\d+)$#', $value, $match)) {
       $node = $db->query('SELECT nid, tnid, type FROM {node} WHERE nid = :nid', [':nid' => $match[1]])->fetchObject();
       $nid = $node && $node->tnid && $node->tnid != $node->nid ? $node->tnid : $node?->nid;
-      // Only pages that were migrated (French-only pages are left out).
+      // Only pages that were migrated.
       if ($node && $node->type === 'content_page' && \Drupal::entityTypeManager()->getStorage('node')->load($nid)) {
         return '/node/' . $nid;
       }

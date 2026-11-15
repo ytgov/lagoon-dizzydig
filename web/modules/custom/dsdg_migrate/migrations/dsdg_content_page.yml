@@ -4,19 +4,13 @@ migration_tags:
   - dsdg
 source:
   # Without translations, d7_node returns each translation set's source node:
-  # English, or French when there's no English version.
+  # English, or French when there's no English version. The 11 French-only
+  # pages are kept as French pages, because French content links to them;
+  # editors can give them English pages or delete them later. Their menu
+  # links aren't migrated (see dsdg_menu_link).
   plugin: d7_node
   node_type: content_page
 process:
-  # The 11 French-only D7 pages are mistakes or lost their English page, so
-  # they're left out. Their French translations come from
-  # dsdg_content_page_translation.
-  _english_only:
-    plugin: skip_on_value
-    source: language
-    value: fr
-    method: row
-    message: 'French-only page left out.'
   # D7 node IDs and UUIDs are kept, so D7 alias sources (node/N) and links
   # stay valid without lookups.
   nid: nid

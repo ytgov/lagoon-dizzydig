@@ -16,8 +16,8 @@ use Drupal\migrate\Row;
  * - a link to a page pairs with the English link to that page's source node;
  * - other links pair through the "pairs" configuration (French mlid =>
  *   English mlid).
- * French links without a pair (to the French-only pages, which aren't
- * migrated) and links to superseded French pages are skipped.
+ * French links without a pair (to the French-only pages, which would show
+ * in English menus too) and links to superseded French pages are skipped.
  *
  * Adds these source properties:
  * - dsdg_menu: the D11 menu, from the "menus" configuration.
@@ -81,8 +81,9 @@ class MenuLink extends CoreMenuLink {
     $pair = $this->pairs()[$mlid] ?? NULL;
     $is_french = $row->getSourceProperty('language') === 'fr';
     if ($is_french && !$pair) {
-      // Unpaired French links go to the French-only pages, which
-      // dsdg_content_page leaves out. Only the main migration reports them.
+      // Unpaired French links go to the French-only pages. D11 menus show a
+      // link in every language, so they're left out (the pages themselves are
+      // migrated). Only the main migration reports them.
       if (empty($this->configuration['translations'])) {
         $this->idMap->saveMessage($row->getSourceIdValues(), "French link \"{$row->getSourceProperty('link_title')}\" has no English link; skipped.", MigrationInterface::MESSAGE_INFORMATIONAL);
       }
