@@ -33,6 +33,11 @@ process:
   status:
     plugin: default_value
     default_value: 1
+  # The editorial workflow applies to content pages; without a state, content
+  # moderation would save the homepage as a draft.
+  moderation_state:
+    plugin: default_value
+    default_value: published
   promote:
     plugin: default_value
     default_value: 0

@@ -2,6 +2,8 @@ uuid: 02761357-b3ee-4cc0-bdd4-a6fe5d6d9944
 langcode: en
 status: true
 dependencies:
+  config:
+    - node.type.content_page
   module:
     - content_moderation
 id: editorial
@@ -28,7 +30,7 @@ type_settings:
       label: 'Ready for Review'
       weight: -1
       published: false
-      default_revision: true
+      default_revision: false
   transitions:
     archive:
       label: Archive
@@ -40,6 +42,7 @@ type_settings:
       label: 'Create New Draft'
       from:
         - draft
+        - ready_for_review
         - published
       to: draft
       weight: -2
@@ -47,6 +50,7 @@ type_settings:
       label: Publish
       from:
         - draft
+        - ready_for_review
         - published
       to: published
       weight: 0
@@ -68,5 +72,7 @@ type_settings:
         - draft
       to: ready_for_review
       weight: -1
-  entity_types: {  }
+  entity_types:
+    node:
+      - content_page
   default_moderation_state: draft
