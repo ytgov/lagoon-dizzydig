@@ -1,0 +1,53 @@
+id: dsdg_category_translation
+label: 'Categories (French names)'
+migration_tags:
+  - dsdg
+source:
+  # D7 translates wetkit_categories term names through the interface
+  # translation (i18n "localize" mode): one locales_target row per term field
+  # and language.
+  plugin: d7_term_localized_translation
+  bundle: wetkit_categories
+  translations: true
+process:
+  tid: tid
+  langcode: ltlanguage
+  # The translation, or the English value when only the other field (name or
+  # description) is translated. As in core's
+  # d7_taxonomy_term_localized_translation.
+  name:
+    -
+      plugin: callback
+      source:
+        - name_translated
+        - name
+      callable: array_filter
+    -
+      plugin: callback
+      callable: current
+  description/value:
+    -
+      plugin: callback
+      source:
+        - description_translated
+        - description
+      callable: array_filter
+    -
+      plugin: callback
+      callable: current
+  description/format:
+    plugin: default_value
+    default_value: full_html
+  content_translation_source:
+    plugin: default_value
+    default_value: en
+  # D7 aliases are migrated by dsdg_url_alias; don't let pathauto make new ones.
+  path/pathauto:
+    plugin: default_value
+    default_value: 0
+destination:
+  plugin: entity:taxonomy_term
+  translations: true
+migration_dependencies:
+  required:
+    - dsdg_category

@@ -78,6 +78,7 @@ reports 2 failures.
 |---|---|---|
 | `dsdg_user` | staff accounts (see below) | users with no password (D7 user IDs kept) |
 | `dsdg_category` | `wetkit_categories` terms | `categories` terms (D7 term IDs kept) |
+| `dsdg_category_translation` | French term names (i18n "localize" mode) | category translations |
 | `dsdg_file` | public files | files (D7 file IDs, URIs and UUIDs kept) |
 | `dsdg_attachment_media` | files in `field_attachments` | `file` media |
 | `dsdg_content_page` | English `content_page` nodes (the 11 French-only pages are left out) | `content_page` nodes (D7 node IDs and UUIDs kept) |
@@ -125,8 +126,6 @@ Accounts (`dsdg_user`, source plugin `StaffUser`):
 
 - Revisions (only the current version) and the workbench moderation state
   (published or unpublished only).
-- French category names (D7 translates them through the interface, i18n
-  "localize" mode).
 - D7's "Navigation" (31 stray page links), "Sidebar", "User menu" and
   "Management" menus.
 - The homepage block, the two webforms and the one `wetkit_page` node.
