@@ -1,0 +1,15 @@
+name: DSDG migration
+type: module
+description: 'Migrates the Drupal 7 Digital Service Delivery Guide into this site. Local DDEV only; see README.md.'
+core_version_requirement: ^11.3
+package: Migration
+dependencies:
+  - drupal:file
+  - drupal:media
+  - drupal:migrate
+  - drupal:migrate_drupal
+  - drupal:node
+  - drupal:path_alias
+  - drupal:taxonomy
+  - migrate_plus:migrate_plus
+  - migrate_tools:migrate_tools

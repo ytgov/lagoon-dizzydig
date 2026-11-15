@@ -1,0 +1,30 @@
+id: dsdg_attachment_media
+label: 'Attachment media (files in D7 field_attachments)'
+migration_tags:
+  - dsdg
+source:
+  plugin: dsdg_attachment_file
+  scheme: public
+process:
+  bundle:
+    plugin: default_value
+    default_value: file
+  name: filename
+  field_media_file/target_id:
+    plugin: migration_lookup
+    migration: dsdg_file
+    source: fid
+    no_stub: true
+  status:
+    plugin: default_value
+    default_value: 1
+  created: timestamp
+  changed: timestamp
+  uid:
+    plugin: default_value
+    default_value: 1
+destination:
+  plugin: entity:media
+migration_dependencies:
+  required:
+    - dsdg_file

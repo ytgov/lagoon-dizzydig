@@ -1,0 +1,37 @@
+id: dsdg_category
+label: 'Categories (D7 wetkit_categories)'
+migration_tags:
+  - dsdg
+source:
+  plugin: d7_taxonomy_term
+  bundle: wetkit_categories
+process:
+  # D7 term IDs are kept, so D7 term paths in aliases stay valid.
+  tid: tid
+  vid:
+    plugin: default_value
+    default_value: categories
+  name: name
+  description/value: description
+  description/format:
+    plugin: default_value
+    default_value: full_html
+  weight: weight
+  parent:
+    -
+      plugin: skip_on_empty
+      method: process
+      source: parent
+    -
+      plugin: migration_lookup
+      migration: dsdg_category
+  langcode:
+    plugin: default_value
+    default_value: en
+  # D7 aliases are migrated by dsdg_url_alias; don't let pathauto make new ones.
+  path/pathauto:
+    plugin: default_value
+    default_value: 0
+destination:
+  plugin: entity:taxonomy_term
+migration_dependencies: {}

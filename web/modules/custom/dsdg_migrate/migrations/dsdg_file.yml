@@ -1,0 +1,41 @@
+id: dsdg_file
+label: 'Public files'
+migration_tags:
+  - dsdg
+source:
+  plugin: d7_file
+  scheme: public
+  constants:
+    # The D7 files are extracted to private/d7/sites/default/files. D7 doesn't
+    # set file_public_path, so the source plugin assumes sites/default/files.
+    source_base_path: /var/www/html/private/d7
+process:
+  # D7 file IDs and UUIDs are kept, so file references in page bodies
+  # (data-entity-uuid) and attachments resolve without lookups.
+  fid: fid
+  uuid: uuid
+  filename: filename
+  source_full_path:
+    -
+      plugin: concat
+      delimiter: /
+      source:
+        - constants/source_base_path
+        - filepath
+    -
+      plugin: urlencode
+  uri:
+    plugin: file_copy
+    source:
+      - '@source_full_path'
+      - uri
+  filemime: filemime
+  status: status
+  created: timestamp
+  changed: timestamp
+  uid:
+    plugin: default_value
+    default_value: 1
+destination:
+  plugin: entity:file
+migration_dependencies: {}

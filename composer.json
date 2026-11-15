@@ -59,5 +59,9 @@
         "platform": {
             "php": "8.4.0"
         }
+    },
+    "require-dev": {
+        "drupal/migrate_plus": "^6.0",
+        "drupal/migrate_tools": "^6.1"
     }
 }

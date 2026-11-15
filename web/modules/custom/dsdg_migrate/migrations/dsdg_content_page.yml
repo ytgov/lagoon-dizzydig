@@ -1,0 +1,82 @@
+id: dsdg_content_page
+label: 'Content pages (source language)'
+migration_tags:
+  - dsdg
+source:
+  # Without translations, d7_node returns each translation set's source node
+  # (English, or French when there's no English version).
+  plugin: d7_node
+  node_type: content_page
+process:
+  # D7 node IDs and UUIDs are kept, so D7 alias sources (node/N) and links
+  # stay valid without lookups.
+  nid: nid
+  uuid: uuid
+  type:
+    plugin: default_value
+    default_value: content_page
+  langcode:
+    plugin: static_map
+    source: language
+    map:
+      und: en
+    bypass: true
+  title: title
+  uid:
+    plugin: default_value
+    default_value: 1
+  status: status
+  created: created
+  changed: changed
+  promote: promote
+  sticky: sticky
+  body/value:
+    plugin: dsdg_body
+    source: body/0/value
+  body/summary: body/0/summary
+  body/format:
+    plugin: default_value
+    default_value: full_html
+  field_description/value: field_description/0/value
+  field_description/format:
+    plugin: default_value
+    default_value: plain_text
+  field_categories:
+    plugin: sub_process
+    source: field_categories
+    process:
+      target_id:
+        plugin: migration_lookup
+        migration: dsdg_category
+        source: tid
+        no_stub: true
+  field_attachments:
+    plugin: sub_process
+    source: field_attachments
+    process:
+      target_id:
+        plugin: migration_lookup
+        migration: dsdg_attachment_media
+        source: fid
+        no_stub: true
+  field_date_adopted:
+    plugin: sub_process
+    source: field_date_adopted
+    process:
+      value:
+        plugin: format_date
+        source: value
+        from_format: 'Y-m-d H:i:s'
+        to_format: 'Y-m-d'
+  field_old_nid: nid
+  # D7 aliases are migrated by dsdg_url_alias; don't let pathauto make new ones.
+  path/pathauto:
+    plugin: default_value
+    default_value: 0
+destination:
+  plugin: entity:node
+migration_dependencies:
+  required:
+    - dsdg_category
+    - dsdg_file
+    - dsdg_attachment_media

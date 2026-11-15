@@ -1,0 +1,26 @@
+id: dsdg_url_alias
+label: 'URL aliases (pages and categories)'
+migration_tags:
+  - dsdg
+source:
+  plugin: d7_url_alias
+  constants:
+    slash: /
+process:
+  path:
+    plugin: dsdg_path
+    source: source
+  alias:
+    plugin: concat
+    source:
+      - constants/slash
+      - alias
+  # D7 and D11 both use "und" for aliases that apply to every language.
+  langcode: language
+destination:
+  plugin: entity:path_alias
+migration_dependencies:
+  required:
+    - dsdg_category
+    - dsdg_content_page
+    - dsdg_content_page_translation
