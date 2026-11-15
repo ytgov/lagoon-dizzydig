@@ -80,9 +80,11 @@ reports 2 failures.
 | `dsdg_category` | `wetkit_categories` terms | `categories` terms (D7 term IDs kept) |
 | `dsdg_file` | public files | files (D7 file IDs, URIs and UUIDs kept) |
 | `dsdg_attachment_media` | files in `field_attachments` | `file` media |
-| `dsdg_content_page` | `content_page` nodes in their source language | `content_page` nodes (D7 node IDs and UUIDs kept) |
+| `dsdg_content_page` | English `content_page` nodes (the 11 French-only pages are left out) | `content_page` nodes (D7 node IDs and UUIDs kept) |
 | `dsdg_content_page_translation` | translation nodes (linked by `tnid`) | translations of the source node |
 | `dsdg_url_alias` | page and category aliases | path aliases, unchanged |
+| `dsdg_menu_link` | `main-menu` and `menu-wet-footer` links (English) | `main` and `footer` menu links |
+| `dsdg_menu_link_translation` | their French links | translations of the English links |
 
 Page bodies are rewritten by the `dsdg_body` process plugin:
 
@@ -94,6 +96,18 @@ Page bodies are rewritten by the `dsdg_body` process plugin:
 
 Where a D7 translation set has several French nodes, only one is kept (see
 `DsdgSkipSupersededTranslation`).
+
+Menus (source plugin `MenuLink`): D7 keeps separate English and French links,
+so a French link becomes a translation of its English pair. A link to a page
+pairs with the English link to that page's source node; the footer's external
+links pair through `pairs` in both migration files. Then:
+
+- French links with no English pair (to the French-only pages, which aren't
+  migrated) and links to superseded French pages are skipped.
+- Translations get their own URL, which needs this site's
+  `menu_link_url_translation` module (core's menu link URL isn't
+  translatable). Page links are `entity:node/N` in both languages; the French
+  footer links go to the French yukon.ca pages.
 
 Accounts (`dsdg_user`, source plugin `StaffUser`):
 
@@ -113,4 +127,6 @@ Accounts (`dsdg_user`, source plugin `StaffUser`):
   (published or unpublished only).
 - French category names (D7 translates them through the interface, i18n
   "localize" mode).
-- Menus, the homepage block, the two webforms and the one `wetkit_page` node.
+- D7's "Navigation" (31 stray page links), "Sidebar", "User menu" and
+  "Management" menus.
+- The homepage block, the two webforms and the one `wetkit_page` node.

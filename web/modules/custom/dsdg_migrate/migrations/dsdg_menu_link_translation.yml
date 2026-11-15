@@ -1,0 +1,45 @@
+id: dsdg_menu_link_translation
+label: 'Menu links (French translations)'
+migration_tags:
+  - dsdg
+source:
+  plugin: dsdg_menu_link
+  translations: true
+  # Keep menus and pairs the same as in dsdg_menu_link.
+  menus:
+    main-menu: main
+    menu-wet-footer: footer
+  pairs:
+    1997: 1858
+    1998: 1859
+    1999: 1860
+    2000: 1861
+process:
+  # The English link this French link translates. A translation shares the
+  # English link's place in the menu; its title, description and URL are
+  # French. The URL needs the menu_link_url_translation module (core's link
+  # field isn't translatable). Page links are entity:node/N in both languages.
+  id:
+    -
+      plugin: migration_lookup
+      migration: dsdg_menu_link
+      source: dsdg_pair
+      no_stub: true
+    -
+      plugin: skip_on_empty
+      method: row
+      message: 'English link not migrated.'
+  langcode:
+    plugin: default_value
+    default_value: fr
+  title: link_title
+  description: description
+  link/uri: dsdg_uri
+  changed: updated
+destination:
+  plugin: entity:menu_link_content
+  translations: true
+  no_stub: true
+migration_dependencies:
+  required:
+    - dsdg_menu_link

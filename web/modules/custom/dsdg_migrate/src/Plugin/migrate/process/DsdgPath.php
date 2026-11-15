@@ -12,8 +12,9 @@ use Drupal\migrate\Row;
 /**
  * Maps a D7 alias source path to its D11 path.
  *
- * - node/N for a content_page becomes /node/N. French translations (separate
- *   nodes in D7) become /node/{source nid}, the node they were merged into.
+ * - node/N for a migrated content_page becomes /node/N. French translations
+ *   (separate nodes in D7) become /node/{source nid}, the node they were
+ *   merged into.
  * - taxonomy/term/N for a wetkit_categories term becomes /taxonomy/term/N.
  *
  * Anything else skips the row, with a message. dsdg_content_page and
@@ -36,8 +37,10 @@ class DsdgPath extends ProcessPluginBase {
     $db = Database::getConnection('default', 'migrate');
     if (preg_match('#^node/(\d+)$#', $value, $match)) {
       $node = $db->query('SELECT nid, tnid, type FROM {node} WHERE nid = :nid', [':nid' => $match[1]])->fetchObject();
-      if ($node && $node->type === 'content_page') {
-        return '/node/' . ($node->tnid && $node->tnid != $node->nid ? $node->tnid : $node->nid);
+      $nid = $node && $node->tnid && $node->tnid != $node->nid ? $node->tnid : $node?->nid;
+      // Only pages that were migrated (French-only pages are left out).
+      if ($node && $node->type === 'content_page' && \Drupal::entityTypeManager()->getStorage('node')->load($nid)) {
+        return '/node/' . $nid;
       }
     }
     elseif (preg_match('#^taxonomy/term/(\d+)$#', $value, $match)) {
