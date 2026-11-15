@@ -86,6 +86,7 @@ reports 2 failures.
 | `dsdg_url_alias` | page and category aliases | path aliases, unchanged |
 | `dsdg_menu_link` | `main-menu` and `menu-wet-footer` links (English) | `main` and `footer` menu links |
 | `dsdg_menu_link_translation` | their French links | translations of the English links |
+| `dsdg_redirect` | D7's `/search` → `/search/content` (search_facetapi is D7's default search page) | a redirect (redirect module), in every language |
 
 Page bodies are rewritten by the `dsdg_body` process plugin:
 

@@ -1,0 +1,32 @@
+id: dsdg_redirect
+label: 'Redirects (D7 search paths)'
+migration_tags:
+  - dsdg
+source:
+  # D7 search_facetapi is the default search page, so D7 sends /search to
+  # /search/content. D11's search is the search_content view at that path.
+  plugin: embedded_data
+  data_rows:
+    -
+      id: search
+      source: search
+      target: 'internal:/search/content'
+  ids:
+    id:
+      type: string
+process:
+  redirect_source/path: source
+  redirect_redirect/uri: target
+  # Every language; the target keeps the request's language prefix.
+  language:
+    plugin: default_value
+    default_value: und
+  status_code:
+    plugin: default_value
+    default_value: 301
+  uid:
+    plugin: default_value
+    default_value: 1
+destination:
+  plugin: entity:redirect
+migration_dependencies: {}
