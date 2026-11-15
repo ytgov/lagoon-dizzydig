@@ -78,9 +78,8 @@
   ]
 %}
 
-{% set last_updated_month = node.changed.value|date("F") %}
-
-{% set last_updated_date = node.changed.value|date("d, Y") %}
+{# As D7 showed it: "August 9, 2023", "9 janvier 2021". #}
+{% set last_updated = node.changed.value|format_date('custom', node.langcode.value == 'fr' ? 'j F Y' : 'F j, Y', null, node.langcode.value) %}
 
 {{ content.field_date_adopted }}
 
@@ -88,7 +87,7 @@
       <div class="field-label">{{ "Last update"|t }}:&nbsp;</div>
     <div class="field-items">
           <div class="field-item even"><span class="date-display-single">
-           {{ last_updated_month|t }} {{ last_updated_date }}</span></div>
+           {{ last_updated }}</span></div>
       </div>
 </div>
 
