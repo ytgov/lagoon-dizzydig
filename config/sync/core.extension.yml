@@ -53,7 +53,6 @@ module:
   media_library: 0
   menu_block: 0
   menu_link_content: 0
-  menu_link_url_translation: 0
   menu_ui: 0
   metatag: 0
   metatag_views: 0
@@ -91,6 +90,7 @@ module:
   tmgmt_locale: 0
   token: 0
   toolbar: 0
+  translatable_menu_link_uri: 0
   twig_tweak: 0
   update: 0
   user: 0

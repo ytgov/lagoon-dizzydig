@@ -109,10 +109,11 @@ links pair through `pairs` in both migration files. Then:
   would show in English menus too) and links to superseded French pages are
   skipped. The French-only pages are migrated, because French content links to
   them; editors can give them English pages or delete them.
-- Translations get their own URL, which needs this site's
-  `menu_link_url_translation` module (core's menu link URL isn't
-  translatable). Page links are `entity:node/N` in both languages; the French
-  footer links go to the French yukon.ca pages.
+- Page links are `entity:node/N` in both languages, so translations share
+  the English link's URL. Where the French URL differs (the footer's yukon.ca/fr
+  pages), it goes in `link_override`, the translatable field from the base's
+  contrib `translatable_menu_link_uri` module (core's menu link URL isn't
+  translatable).
 
 Accounts (`dsdg_user`, source plugin `StaffUser`):
 

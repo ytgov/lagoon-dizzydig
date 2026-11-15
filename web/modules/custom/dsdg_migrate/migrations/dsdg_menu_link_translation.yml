@@ -16,9 +16,11 @@ source:
     2000: 1861
 process:
   # The English link this French link translates. A translation shares the
-  # English link's place in the menu; its title, description and URL are
-  # French. The URL needs the menu_link_url_translation module (core's link
-  # field isn't translatable). Page links are entity:node/N in both languages.
+  # English link's place in the menu and URL; its title and description are
+  # French. Where the French URL differs (the footer's yukon.ca/fr pages), it
+  # goes in link_override, the translatable field from the contrib
+  # translatable_menu_link_uri module. Page links are entity:node/N in both
+  # languages, so they don't need one.
   id:
     -
       plugin: migration_lookup
@@ -34,7 +36,10 @@ process:
     default_value: fr
   title: link_title
   description: description
-  link/uri: dsdg_uri
+  link_override/uri:
+    plugin: skip_on_empty
+    method: process
+    source: dsdg_uri_override
   changed: updated
 destination:
   plugin: entity:menu_link_content

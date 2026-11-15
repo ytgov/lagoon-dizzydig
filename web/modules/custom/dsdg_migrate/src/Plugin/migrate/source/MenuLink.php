@@ -24,6 +24,9 @@ use Drupal\migrate\Row;
  * - dsdg_pair: for a French link, the English link's mlid.
  * - dsdg_uri: entity:node/N for pages (French pages map to their source
  *   node), the URL for external links, internal:/PATH otherwise.
+ * - dsdg_uri_override: for a French link, its dsdg_uri if that differs from
+ *   the English link's, else NULL. Page links share entity:node/N, so only
+ *   links such as the footer's yukon.ca/fr pages get one.
  * - dsdg_parent: the parent's mlid, using its English pair if it has one.
  *
  * Configuration:
@@ -96,7 +99,16 @@ class MenuLink extends CoreMenuLink {
 
     $row->setSourceProperty('dsdg_menu', $this->configuration['menus'][$row->getSourceProperty('menu_name')]);
     $row->setSourceProperty('dsdg_pair', $pair);
-    $row->setSourceProperty('dsdg_uri', $this->uri($row));
+    $uri = $this->uri($row->getSourceProperty('link_path'), (bool) $row->getSourceProperty('external'));
+    $row->setSourceProperty('dsdg_uri', $uri);
+    if ($pair) {
+      $english = $this->select('menu_links', 'ml')
+        ->fields('ml', ['link_path', 'external'])
+        ->condition('ml.mlid', $pair)
+        ->execute()
+        ->fetchAssoc();
+      $row->setSourceProperty('dsdg_uri_override', $uri !== $this->uri($english['link_path'], (bool) $english['external']) ? $uri : NULL);
+    }
     $plid = $row->getSourceProperty('plid');
     $row->setSourceProperty('dsdg_parent', $this->pairs()[$plid] ?? $plid);
     return $result;
@@ -147,11 +159,10 @@ class MenuLink extends CoreMenuLink {
   }
 
   /**
-   * Returns the link's D11 URI.
+   * Returns the D11 URI of a D7 link path.
    */
-  protected function uri(Row $row): string {
-    $path = $row->getSourceProperty('link_path');
-    if ($row->getSourceProperty('external')) {
+  protected function uri(string $path, bool $external): string {
+    if ($external) {
       return $path;
     }
     if (preg_match('#^node/(\d+)$#', $path, $match)) {
