@@ -1,0 +1,37 @@
+<?php
+
+/**
+ * @file
+ * Install and uninstall functions for menu_link_url_translation.
+ */
+
+/**
+ * Implements hook_install().
+ */
+function menu_link_url_translation_install(): void {
+  _menu_link_url_translation_update_storage(TRUE);
+}
+
+/**
+ * Implements hook_uninstall().
+ */
+function menu_link_url_translation_uninstall(): void {
+  // Translations keep their stored URLs; editing a link afterwards gives all
+  // its translations the URL of the language being saved.
+  _menu_link_url_translation_update_storage(FALSE);
+}
+
+/**
+ * Tells the entity system that the "link" field's translatability changed.
+ *
+ * Menu link values are already stored per translation (in
+ * menu_link_content_data), so this changes no tables.
+ */
+function _menu_link_url_translation_update_storage(bool $translatable): void {
+  $manager = \Drupal::entityDefinitionUpdateManager();
+  $definition = $manager->getFieldStorageDefinition('link', 'menu_link_content');
+  if ($definition && $definition->isTranslatable() !== $translatable) {
+    $definition->setTranslatable($translatable);
+    $manager->updateFieldStorageDefinition($definition);
+  }
+}

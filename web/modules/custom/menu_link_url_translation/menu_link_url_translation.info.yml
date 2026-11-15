@@ -1,0 +1,7 @@
+name: Menu link URL translation
+type: module
+description: 'Makes the URL of a custom menu link translatable, so a translation can link to a different page, such as a French yukon.ca page.'
+core_version_requirement: ^11.3
+package: Multilingual
+dependencies:
+  - drupal:menu_link_content
