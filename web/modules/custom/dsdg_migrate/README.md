@@ -92,8 +92,9 @@ Page bodies are rewritten by the `dsdg_body` process plugin:
 
 - `[uuid-link:node:UUID]` becomes the linked page's D7 URL (`/{lang}/{alias}`).
   As D7 renders these links in the current language, a French body links to
-  the page's published French translation when there is one. Links to D7 nodes
-  that no longer exist are left as is, with a migration message.
+  the page's published French translation when there is one. A link to a D7
+  node that no longer exists is removed and its text kept, as D7's uuid_link
+  filter did when it rendered the page (with a migration message).
 - `[[{"fid":…}]]` media tags become `<img>` (or a link for other files)
   pointing at the migrated file.
 

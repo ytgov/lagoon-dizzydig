@@ -17,6 +17,8 @@ use Drupal\migrate\Row;
  *   links in the current language, it links to the page's published
  *   translation in the body's language (the row's "language", English by
  *   default) if there is one, and to the page in its own language otherwise.
+ *   A link to a D7 node that no longer exists is removed and its text kept,
+ *   as D7's uuid_link filter did when it rendered the page.
  * - [[{"fid":...}]] media tags become an <img> for images, or a link for other
  *   files, with data-entity-type/uuid so editor_file_reference tracks usage.
  *   dsdg_file keeps D7 file IDs, URIs and UUIDs.
@@ -41,6 +43,11 @@ class DsdgBody extends ProcessPluginBase {
   protected static array $nodeUrls = [];
 
   /**
+   * The href D7's uuid_link filter gave links to nodes that don't exist.
+   */
+  const NOT_FOUND = '#uuid-link-not-found';
+
+  /**
    * {@inheritdoc}
    */
   public function transform($value, MigrateExecutableInterface $migrate_executable, Row $row, $destination_property) {
@@ -51,11 +58,12 @@ class DsdgBody extends ProcessPluginBase {
     $value = preg_replace_callback('/\[uuid-link:node:([0-9a-f-]{36})\]/', function ($match) use ($migrate_executable, $langcode) {
       $url = $this->nodeUrl($match[1], $langcode);
       if ($url === NULL) {
-        $migrate_executable->saveMessage("Link to unknown D7 node {$match[1]} left as is.");
-        return $match[0];
+        $migrate_executable->saveMessage("Link to unknown D7 node {$match[1]} removed, its text kept.");
+        return static::NOT_FOUND;
       }
       return $url;
     }, $value);
+    $value = $this->removeNotFoundLinks($value);
 
     return preg_replace_callback('/\[\[(\{.+?\})\]\]/s', function ($match) use ($migrate_executable) {
       $tag = json_decode($match[1], TRUE);
@@ -66,6 +74,24 @@ class DsdgBody extends ProcessPluginBase {
       }
       return $markup;
     }, $value);
+  }
+
+  /**
+   * Replaces links to NOT_FOUND with their contents.
+   */
+  protected function removeNotFoundLinks(string $html): string {
+    if (!str_contains($html, static::NOT_FOUND)) {
+      return $html;
+    }
+    $dom = Html::load($html);
+    $links = (new \DOMXPath($dom))->query('//a[@href="' . static::NOT_FOUND . '"]');
+    foreach (iterator_to_array($links) as $link) {
+      while ($link->firstChild) {
+        $link->parentNode->insertBefore($link->firstChild, $link);
+      }
+      $link->parentNode->removeChild($link);
+    }
+    return Html::serialize($dom);
   }
 
   /**
