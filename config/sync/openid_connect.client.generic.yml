@@ -1,0 +1,21 @@
+uuid: 1233f7f3-90f5-4749-bb2c-b4b28c5f9348
+langcode: en
+status: true
+dependencies: {  }
+id: generic
+label: 'Yukon SSO'
+plugin: generic
+settings:
+  client_id: SEELOCALSETTINGS
+  client_secret: SEELOCALSETTINGS
+  iss_allowed_domains: ''
+  prompt:
+    login: login
+  issuer_url: ''
+  authorization_endpoint: SEELOCALSETTINGS
+  token_endpoint: SEELOCALSETTINGS
+  userinfo_endpoint: SEELOCALSETTINGS
+  end_session_endpoint: ''
+  scopes:
+    - openid
+    - email
