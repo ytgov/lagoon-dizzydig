@@ -135,6 +135,36 @@ function yukonca_glider_form_alter(&$form, FormStateInterface $form_state, $form
 }
 
 /**
+ * Implements hook_form_FORM_ID_alter() for user_login_form.
+ *
+ * The password form (/user/login?showcore) uses the Bootstrap classes D7's
+ * theme gave it, so WET-BOEW's form and button styles apply.
+ */
+function yukonca_glider_form_user_login_form_alter(&$form, FormStateInterface $form_state, $form_id) {
+  foreach (['name', 'pass'] as $field) {
+    $form[$field]['#wrapper_attributes']['class'][] = 'form-group';
+    $form[$field]['#label_attributes']['class'][] = 'control-label';
+    $form[$field]['#attributes']['class'][] = 'form-control';
+  }
+  $form['actions']['submit']['#attributes']['class'][] = 'btn';
+  $form['actions']['submit']['#attributes']['class'][] = 'btn-primary';
+}
+
+/**
+ * Implements hook_form_FORM_ID_alter() for openid_connect_login_form.
+ *
+ * Makes the "Log in with MyYukon" button a primary button.
+ */
+function yukonca_glider_form_openid_connect_login_form_alter(&$form, FormStateInterface $form_state, $form_id) {
+  foreach ($form as $key => &$element) {
+    if (is_array($element) && ($element['#type'] ?? NULL) === 'submit') {
+      $element['#attributes']['class'][] = 'btn';
+      $element['#attributes']['class'][] = 'btn-primary';
+    }
+  }
+}
+
+/**
  * Implements template_preprocess_field().
  */
 function yukonca_glider_preprocess_field(&$variables) {

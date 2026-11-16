@@ -841,3 +841,55 @@ html[lang="fr"] legend#edit-was-this-page-helpful--wrapper-legend {
     }
 }
 
+
+/* =============================================================================
+   Buttons and form fields, as on the D7 guide (yukon_wxt). WET-BOEW's
+   theme.min.css styles .btn-primary narrow and blue, and .form-control grey.
+   ========================================================================== */
+
+.btn-primary,
+.btn-primary:visited,
+.more-link a,
+.more-link a:visited {
+  color: #fff;
+  background-color: #00616D;
+  border-color: transparent;
+}
+
+/* Wider buttons in page bodies only; elsewhere (the login forms) .btn's
+   6px 12px, as on D7. */
+.field--name-body .btn-primary,
+.field--name-body .more-link a {
+  padding: 15px 30px;
+}
+
+/* WET-BOEW fixes input[type="submit"] at 37px high, which clips the padding
+   of input buttons (D7 used <button> elements). */
+input.btn {
+  height: auto;
+}
+
+.btn-primary:hover,
+.btn-primary:focus,
+.btn-primary:active,
+.btn-primary.active,
+.btn-primary.focus,
+.more-link a:hover,
+.more-link a:focus,
+.more-link a:active {
+  color: #fff;
+  background-color: #00454E;
+  border-color: transparent;
+}
+
+/* D7 had a light grey (#f1f1f1) field background; D11 keeps it white. */
+.form-control {
+  border-color: #ffcd57;
+  background-color: #fff;
+  width: 100%;
+  box-shadow: none;
+}
+
+.form-control.form-textarea {
+  border: 1px solid #ccc;
+}
