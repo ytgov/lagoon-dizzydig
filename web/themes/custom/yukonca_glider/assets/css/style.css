@@ -770,6 +770,12 @@ p.facet-block__title {
 .view-search-content  ol {
     padding-left: 20px;
 }
+/* Views wraps each result's <h3> in an inline <span>; Safari then puts the
+   list number on an empty line above the title. As a block, the number lines
+   up with the title in every browser. */
+.view-search-content .views-field .field-content {
+    display: block;
+}
 body.path-search  .main-content-wrap {
     padding-top: 0;
 }
