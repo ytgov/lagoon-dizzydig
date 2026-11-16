@@ -66,6 +66,14 @@ processor_configs:
     weights:
       build: 100
     settings: {  }
+  replace:
+    processor_id: replace
+    weights:
+      build: 35
+    settings:
+      replacements: |-
+        en|English
+        fr|French
   url_processor_handler:
     processor_id: url_processor_handler
     weights:

@@ -716,20 +716,44 @@ main .views-exposed-form input[type="text"] {
     background-color: #f1f1f1;
     width: 100%;
 }
+/* The search page's form: the field with a teal search button joined on its
+   right, as D7's input group. */
+.path-search main .views-exposed-form .form--inline {
+    display: flex;
+}
 .path-search main .views-exposed-form .form--inline .form-item {
-    width: 90%;
+    flex: 1;
+    margin: 0;
+}
+.path-search main .views-exposed-form input[type="text"] {
+    border-radius: 4px 0 0 4px;
+}
+.path-search main .form-actions {
+    position: relative;
+    margin: 0;
 }
 .path-search main .form-actions:after {
     content: "\f002";
     position: absolute;
-    right: 32px;
-    top: 8px;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
     font-family: 'FontAwesome';
+    color: #fff;
+    pointer-events: none;
 }
 .path-search main .form-actions input {
-    background: #ffcd57;
+    height: 37px;
+    width: 42px;
+    padding: 0;
+    background: #00616D;
     border: 0;
+    border-radius: 0 4px 4px 0;
     color: transparent;
+}
+.path-search main .form-actions input:hover,
+.path-search main .form-actions input:focus {
+    background: #00454E;
 }
 p.facet-block__title {
     font-size: 26px;
@@ -740,7 +764,6 @@ p.facet-block__title {
     padding-left: 20px;
 }
 .facets-widget-links ul a {
-    text-transform: capitalize;
     font-size: 16px;
     color: #00818f;
 }
@@ -882,10 +905,9 @@ input.btn {
   border-color: transparent;
 }
 
-/* D7 had a light grey (#f1f1f1) field background; D11 keeps it white. */
 .form-control {
   border-color: #ffcd57;
-  background-color: #fff;
+  background-color: #f1f1f1;
   width: 100%;
   box-shadow: none;
 }

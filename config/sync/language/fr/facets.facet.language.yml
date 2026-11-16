@@ -1,1 +1,7 @@
 name: 'Filtrer par langue :'
+processor_configs:
+  replace:
+    settings:
+      replacements: |-
+        en|Anglais
+        fr|Français

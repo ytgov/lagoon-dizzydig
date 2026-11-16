@@ -8,7 +8,6 @@ dependencies:
     - search_api.server.search
   module:
     - node
-    - taxonomy
 id: main_search
 name: 'Main Search'
 description: ''
@@ -22,6 +21,14 @@ field_settings:
     dependencies:
       config:
         - field.storage.node.body
+  field_categories:
+    label: Categories
+    datasource_id: 'entity:node'
+    property_path: field_categories
+    type: integer
+    dependencies:
+      config:
+        - field.storage.node.field_categories
   langcode:
     label: Language
     datasource_id: 'entity:node'
@@ -30,16 +37,6 @@ field_settings:
     dependencies:
       module:
         - node
-  name:
-    label: 'Categories » Taxonomy term » Name'
-    datasource_id: 'entity:node'
-    property_path: 'field_categories:entity:name'
-    type: string
-    dependencies:
-      config:
-        - field.storage.node.field_categories
-      module:
-        - taxonomy
   node_grants:
     label: 'Node access information'
     property_path: search_api_node_grants
@@ -109,7 +106,6 @@ processor_settings:
     fields:
       - body
       - langcode
-      - name
       - title
     ignorable: "['¿¡!?,.:;]"
     ignorable_classes:
@@ -128,7 +124,6 @@ processor_settings:
     fields:
       - body
       - langcode
-      - name
       - title
   language_with_fallback: {  }
   rendered_item: {  }
