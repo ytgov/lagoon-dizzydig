@@ -1,0 +1,6 @@
+services:
+  dsdg_migrate.translation_redirects:
+    class: Drupal\dsdg_migrate\EventSubscriber\TranslationRedirects
+    arguments: ['@keyvalue', '@state']
+    tags:
+      - { name: event_subscriber }

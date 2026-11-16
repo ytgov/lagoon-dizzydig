@@ -146,6 +146,14 @@ The homepage uses vid 1, below D7's revision IDs (361 and up).
 Rolling back a page's default revision deletes the page; rolling back another
 revision deletes just that revision.
 
+D7 URLs of translation nodes (`/fr/node/N`) keep working: core's
+`NodeTranslationExceptionSubscriber` redirects them to the page's translation
+using the `node_translation_redirect` key-value store, which core only fills
+for `translations: true` migrations. The `TranslationRedirects` event
+subscriber fills it after `dsdg_content_page_revision` is imported, for all
+203 D7 translation nodes (superseded ones go to the kept translation), and
+empties it on rollback.
+
 Menus (source plugin `MenuLink`): D7 keeps separate English and French links,
 so a French link becomes a translation of its English pair. A link to a page
 pairs with the English link to that page's source node; the footer's external
