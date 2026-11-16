@@ -83,6 +83,8 @@
 
 {{ content.field_date_adopted }}
 
+{# The home page, like D7's homepage block, has no date. #}
+{% if not is_front %}
 <div class="field field-name-field-updated-date field-type-datetime field-label-inline clearfix">
       <div class="field-label">{{ "Last update"|t }}:&nbsp;</div>
     <div class="field-items">
@@ -90,6 +92,7 @@
            {{ last_updated }}</span></div>
       </div>
 </div>
+{% endif %}
 
 {{ content.body }}
 

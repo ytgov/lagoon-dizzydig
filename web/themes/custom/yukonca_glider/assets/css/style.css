@@ -893,3 +893,12 @@ input.btn {
 .form-control.form-textarea {
   border: 1px solid #ccc;
 }
+
+/* The home page title, as D7 showed its homepage block's title. */
+.path-frontpage h1.title.page-title {
+  font-size: 26px;
+  font-weight: 500;
+  line-height: 1.1;
+  margin-bottom: 11.5px;
+  padding-bottom: 0;
+}
