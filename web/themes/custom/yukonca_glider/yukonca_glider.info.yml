@@ -2,6 +2,10 @@ name: Yukonca glider
 type: theme
 description: 'A Bootstrap-Tailwind-Powered theme based on Glider.'
 core_version_requirement: ^11.3
+# The theme's own interface translations, imported by drush locale:check and
+# locale:update (and cron); translations customized in the UI take precedence.
+'interface translation project': yukonca_glider
+'interface translation server pattern': themes/custom/yukonca_glider/translations/%language.po
 base theme: false
 regions:
   header_branding: Header - Branding

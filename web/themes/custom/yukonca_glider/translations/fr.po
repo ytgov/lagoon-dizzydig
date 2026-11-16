@@ -1,0 +1,14 @@
+# French interface translations for the yukonca_glider theme.
+#
+# Imported by "drush locale:check && drush locale:update" (and cron) through
+# the theme's "interface translation server pattern". Translations customized
+# in the admin UI take precedence over these.
+msgid ""
+msgstr ""
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+
+# Header logo label and footer copyright.
+msgid "Government of Yukon"
+msgstr "Gouvernement du Yukon"
