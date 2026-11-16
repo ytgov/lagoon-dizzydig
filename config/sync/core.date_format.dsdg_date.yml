@@ -1,0 +1,8 @@
+uuid: c8700a7d-c123-4008-9532-27f596ca900e
+langcode: en
+status: true
+dependencies: {  }
+id: dsdg_date
+label: 'DSDG date (as D7)'
+locked: false
+pattern: 'F j, Y'

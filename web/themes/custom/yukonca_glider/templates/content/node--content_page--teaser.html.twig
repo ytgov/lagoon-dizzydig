@@ -78,8 +78,8 @@
   ]
 %}
 
-{# As D7 showed it: "August 9, 2023", "9 janvier 2021". #}
-{% set last_updated = node.changed.value|format_date('custom', node.langcode.value == 'fr' ? 'j F Y' : 'F j, Y', null, node.langcode.value) %}
+{# As D7 showed it: "August 9, 2023", "9 janvier 2021" (date format dsdg_date). #}
+{% set last_updated = node.changed.value|format_date('dsdg_date', '', null, node.langcode.value) %}
 <header>
             <h2><a href="{{ url }}">{{ label }}</a></h2>
           </header>
