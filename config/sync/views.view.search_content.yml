@@ -22,7 +22,7 @@ display:
     display_plugin: default
     position: 0
     display_options:
-      title: 'Search content'
+      title: Search
       fields:
         title:
           id: title
@@ -94,84 +94,10 @@ display:
             use_highlighting: false
             multi_type: separator
             multi_separator: ', '
-        uid:
-          id: uid
+        changed:
+          id: changed
           table: search_api_datasource_main_search_entity_node
-          field: uid
-          relationship: none
-          group_type: group
-          admin_label: ''
-          entity_type: node
-          plugin_id: search_api_field
-          label: ''
-          exclude: true
-          alter:
-            alter_text: false
-            text: ''
-            make_link: false
-            path: ''
-            absolute: false
-            external: false
-            replace_spaces: false
-            path_case: none
-            trim_whitespace: false
-            alt: ''
-            rel: ''
-            link_class: ''
-            prefix: ''
-            suffix: ''
-            target: ''
-            nl2br: false
-            max_length: 0
-            word_boundary: true
-            ellipsis: true
-            more_link: false
-            more_link_text: ''
-            more_link_path: ''
-            strip_tags: false
-            trim: false
-            preserve_tags: ''
-            html: false
-          element_type: ''
-          element_class: ''
-          element_label_type: ''
-          element_label_class: ''
-          element_label_colon: false
-          element_wrapper_type: ''
-          element_wrapper_class: ''
-          element_default_classes: true
-          empty: ''
-          hide_empty: false
-          empty_zero: false
-          hide_alter_empty: true
-          click_sort_column: target_id
-          type: entity_reference_label
-          settings:
-            link: false
-          group_column: target_id
-          group_columns: {  }
-          group_rows: true
-          delta_limit: 0
-          delta_offset: 0
-          delta_reversed: false
-          delta_first_last: false
-          multi_type: separator
-          separator: ', '
-          field_api_classes: false
-          field_rendering: true
-          fallback_handler: search_api_entity
-          fallback_options:
-            link_to_item: false
-            use_highlighting: false
-            multi_type: separator
-            multi_separator: ', '
-            display_methods:
-              user:
-                display_method: label
-        created:
-          id: created
-          table: search_api_datasource_main_search_entity_node
-          field: created
+          field: changed
           relationship: none
           group_type: group
           admin_label: ''
@@ -221,7 +147,7 @@ display:
           click_sort_column: value
           type: timestamp
           settings:
-            date_format: short
+            date_format: dsdg_date
             custom_date_format: ''
             timezone: ''
             tooltip:
@@ -326,6 +252,59 @@ display:
             multi_type: separator
             multi_separator: ', '
             filter_type: xss
+        search_api_excerpt:
+          id: search_api_excerpt
+          table: search_api_index_main_search
+          field: search_api_excerpt
+          relationship: none
+          group_type: group
+          admin_label: ''
+          plugin_id: search_api
+          label: ''
+          exclude: true
+          alter:
+            alter_text: false
+            text: ''
+            make_link: false
+            path: ''
+            absolute: false
+            external: false
+            replace_spaces: false
+            path_case: none
+            trim_whitespace: false
+            alt: ''
+            rel: ''
+            link_class: ''
+            prefix: ''
+            suffix: ''
+            target: ''
+            nl2br: false
+            max_length: 200
+            word_boundary: true
+            ellipsis: true
+            more_link: false
+            more_link_text: ''
+            more_link_path: ''
+            strip_tags: false
+            trim: false
+            preserve_tags: ''
+            html: false
+          element_type: ''
+          element_class: ''
+          element_label_type: ''
+          element_label_class: ''
+          element_label_colon: false
+          element_wrapper_type: ''
+          element_wrapper_class: ''
+          element_default_classes: true
+          empty: '{{ body }}'
+          hide_empty: false
+          empty_zero: false
+          hide_alter_empty: true
+          link_to_item: false
+          use_highlighting: false
+          multi_type: separator
+          multi_separator: ', '
         nothing:
           id: nothing
           table: views
@@ -338,7 +317,7 @@ display:
           exclude: false
           alter:
             alter_text: true
-            text: "<div class=\"search-snippet-info\">\r\n          <p class=\"search-snippet\">   \r\n      \r\n  {{ body }}</p>\r\n              <p class=\"search-info\"><span class=\"username\">{{ uid }} </span> - {{ created }} </p>\r\n      </div>"
+            text: "<div class=\"search-snippet-info\">\r\n          <p class=\"search-snippet\">   \r\n      \r\n  {{ search_api_excerpt }}</p>\r\n              <p class=\"search-info\">{{ changed }} </p>\r\n      </div>"
             make_link: false
             path: ''
             absolute: false
@@ -413,9 +392,58 @@ display:
       cache:
         type: search_api_none
         options: {  }
-      empty: {  }
+      empty:
+        area_text_custom:
+          id: area_text_custom
+          table: views
+          field: area_text_custom
+          relationship: none
+          group_type: group
+          admin_label: ''
+          plugin_id: text_custom
+          empty: true
+          content: |-
+            <h2>Your search yielded no results</h2>
+            <ul>
+              <li>Check if your spelling is correct.</li>
+              <li>Try fewer or more general keywords.</li>
+            </ul>
+          tokenize: false
       sorts: {  }
-      arguments: {  }
+      arguments:
+        search_api_fulltext:
+          id: search_api_fulltext
+          table: search_api_index_main_search
+          field: search_api_fulltext
+          relationship: none
+          group_type: group
+          admin_label: ''
+          plugin_id: search_api_fulltext
+          default_action: empty
+          exception:
+            value: all
+            title_enable: false
+            title: All
+          title_enable: false
+          title: ''
+          default_argument_type: fixed
+          default_argument_options:
+            argument: ''
+          summary_options: {  }
+          summary:
+            sort_order: asc
+            number_of_records: 0
+            format: default_summary
+          specify_validation: false
+          validate:
+            type: none
+            fail: 'not found'
+          validate_options: {  }
+          break_phrase: false
+          not: false
+          parse_mode: terms
+          conjunction: AND
+          fields: {  }
       filters:
         search_api_fulltext:
           id: search_api_fulltext

@@ -1,0 +1,8 @@
+name: DSDG search
+type: module
+description: 'Search URLs, form and breadcrumb as on the D7 guide: /search/content/{keywords}.'
+core_version_requirement: ^11.3
+package: DSDG
+dependencies:
+  - drupal:views
+  - search_api:search_api

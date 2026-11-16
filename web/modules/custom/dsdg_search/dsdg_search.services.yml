@@ -1,0 +1,10 @@
+services:
+  dsdg_search.keywords_redirect:
+    class: Drupal\dsdg_search\EventSubscriber\KeywordsRedirect
+    tags:
+      - { name: event_subscriber }
+  dsdg_search.breadcrumb:
+    class: Drupal\dsdg_search\Breadcrumb\SearchBreadcrumbBuilder
+    tags:
+      # Ahead of easy_breadcrumb (1003).
+      - { name: breadcrumb_builder, priority: 1100 }

@@ -2,8 +2,6 @@ uuid: 0d9592f0-4a1d-42dc-820e-af5e685d6bfa
 langcode: en
 status: true
 dependencies:
-  module:
-    - system
   theme:
     - yukonca_glider
 _core:
@@ -19,8 +17,4 @@ settings:
   label: 'Page Title'
   label_display: '0'
   provider: core
-visibility:
-  request_path:
-    id: request_path
-    negate: true
-    pages: /search/content
+visibility: {  }

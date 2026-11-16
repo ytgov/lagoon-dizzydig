@@ -1,0 +1,60 @@
+<?php
+
+/**
+ * @file
+ * Search URLs, form and breadcrumb as on the D7 guide.
+ */
+
+use Drupal\Core\Form\FormStateInterface;
+
+/**
+ * The search page's route; its keywords are the path's last part (arg_0).
+ */
+const DSDG_SEARCH_ROUTE = 'view.search_content.page_1';
+
+/**
+ * Implements hook_form_FORM_ID_alter() for views_exposed_form.
+ *
+ * Fills the search boxes (the header's and the page's) with the keywords from
+ * /search/content/{keywords}.
+ */
+function dsdg_search_form_views_exposed_form_alter(array &$form, FormStateInterface $form_state, string $form_id): void {
+  $route_match = \Drupal::routeMatch();
+  if (isset($form['search_api_fulltext']) && $route_match->getRouteName() === DSDG_SEARCH_ROUTE) {
+    $keywords = (string) $route_match->getRawParameter('arg_0');
+    if ($keywords !== '') {
+      $form['search_api_fulltext']['#value'] = $keywords;
+    }
+    $form['#cache']['contexts'][] = 'url.path';
+  }
+}
+
+/**
+ * Implements hook_views_pre_render().
+ *
+ * Without keywords the search page shows only its form, as on D7: the view
+ * finds nothing (the contextual filter's "display empty" action), and this
+ * hides its "no results" text, which is for searches that found nothing.
+ */
+function dsdg_search_views_pre_render(\Drupal\views\ViewExecutable $view): void {
+  if ($view->id() === 'search_content' && $view->current_display === 'page_1' && (string) ($view->args[0] ?? '') === '') {
+    $view->empty = [];
+  }
+}
+
+/**
+ * Implements hook_block_access().
+ *
+ * The filters sidebar shows only when the search found something, as on D7:
+ * not on the blank search page, nor when nothing matched (unless a filter is
+ * active, so it can be removed). Blocks are built after the page's main
+ * content, so the search has already run.
+ */
+function dsdg_search_block_access(\Drupal\block\Entity\Block $block, string $operation, \Drupal\Core\Session\AccountInterface $account): \Drupal\Core\Access\AccessResultInterface {
+  if ($operation === 'view' && $block->getPluginId() === 'facets_block' && \Drupal::routeMatch()->getRouteName() === DSDG_SEARCH_ROUTE) {
+    $results = \Drupal::service('search_api.query_helper')->getResults('views_page:search_content__page_1');
+    $found = ($results && $results->getResultCount() > 0) || \Drupal::request()->query->has('f');
+    return \Drupal\Core\Access\AccessResult::forbiddenIf(!$found)->addCacheContexts(['url.path', 'url.query_args']);
+  }
+  return \Drupal\Core\Access\AccessResult::neutral();
+}

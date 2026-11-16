@@ -10,3 +10,12 @@ display:
           content:
             value: '<h2>Résultats de la recherche</h2>'
             format: full_html
+      title: Rechercher
+      empty:
+        area_text_custom:
+          content: |-
+            <h2>Votre recherche n’a donné aucun résultat</h2>
+            <ul>
+              <li>Vérifiez que l’orthographe est correcte.</li>
+              <li>Essayez des mots-clés moins nombreux ou plus généraux.</li>
+            </ul>

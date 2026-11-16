@@ -29,4 +29,6 @@ visibility:
   request_path:
     id: request_path
     negate: false
-    pages: /search/content
+    pages: |-
+      /search/content
+      /search/content/*
